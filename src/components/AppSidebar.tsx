@@ -11,8 +11,8 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
   const truncatedAddress = address
