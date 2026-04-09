@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Wallet, ChevronRight } from "lucide-react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS, type PanelId } from "@/pages/Index";
+import { WalletConnectModal } from "@/components/WalletConnectModal";
 
 interface AppSidebarProps {
   activePanel: PanelId;
@@ -9,8 +11,8 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
   const truncatedAddress = address
@@ -70,16 +72,14 @@ export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
           <Button
             className="w-full"
             size="sm"
-            onClick={() => {
-              const connector = connectors[0];
-              if (connector) connect({ connector });
-            }}
+            onClick={() => setWalletModalOpen(true)}
           >
             <Wallet className="h-4 w-4 mr-2" />
             Connect Wallet
           </Button>
         )}
       </div>
+      <WalletConnectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
     </aside>
   );
 }
