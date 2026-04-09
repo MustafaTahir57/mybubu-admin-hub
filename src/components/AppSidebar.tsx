@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Wallet, ChevronRight } from "lucide-react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS, type PanelId } from "@/pages/Index";
+import { WalletConnectModal } from "@/components/WalletConnectModal";
 
 interface AppSidebarProps {
   activePanel: PanelId;
