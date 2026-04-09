@@ -72,16 +72,14 @@ export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
           <Button
             className="w-full"
             size="sm"
-            onClick={() => {
-              const connector = connectors[0];
-              if (connector) connect({ connector });
-            }}
+            onClick={() => setWalletModalOpen(true)}
           >
             <Wallet className="h-4 w-4 mr-2" />
             Connect Wallet
           </Button>
         )}
       </div>
+      <WalletConnectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
     </aside>
   );
 }
