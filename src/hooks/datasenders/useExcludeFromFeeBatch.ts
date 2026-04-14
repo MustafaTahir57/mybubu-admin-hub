@@ -1,12 +1,12 @@
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useChainId } from "wagmi";
 import { MYBUBU_ABI, getContracts } from "@/config/contracts";
-import { useChainId } from "wagmi";
 import { toast } from "sonner";
 import { useEffect } from "react";
 
 export function useExcludeFromFeeBatch() {
   const chainId = useChainId();
   const contracts = getContracts(chainId);
+  const { address: account } = useAccount();
 
   const { writeContract, data: hash, isPending, error, reset } = useWriteContract();
 
