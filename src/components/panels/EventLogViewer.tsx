@@ -3,6 +3,7 @@ import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +56,7 @@ export function EventLogViewer() {
             Deposit MYBUBU tokens to fund the swap pool. Must approve this contract on MYBUBU token first.
           </p>
           <div className="flex gap-2">
-            <Input placeholder="Amount (tokens)" type="number" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} className="bg-background border-border text-sm" />
+            <NumericInput placeholder="Amount (tokens)"  value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} className="bg-background border-border text-sm" />
             <SubmitButton onClick={() => depositHook.depositMybubu(depositAmount)} isPending={depositHook.isPending} isConfirming={depositHook.isConfirming} disabled={!depositAmount} label="Deposit" />
           </div>
         </SectionCard>
@@ -64,16 +65,16 @@ export function EventLogViewer() {
           <p className="text-xs text-muted-foreground">
             Withdraw any ERC20 token. Toggle "Withdraw All" to withdraw the full balance.
           </p>
-          <Input placeholder="Token address (0x...)" value={wTokenAddr} onChange={(e) => setWTokenAddr(e.target.value)} className="bg-background border-border font-mono text-xs" />
-          <Input placeholder="Recipient address (0x...)" value={wTo} onChange={(e) => setWTo(e.target.value)} className="bg-background border-border font-mono text-xs" />
+          <Inputplaceholder="Token address (0x...)" value={wTokenAddr} onChange={(e) => setWTokenAddr(e.target.value)} className="bg-background border-border font-mono text-xs" />
+          <Inputplaceholder="Recipient address (0x...)" value={wTo} onChange={(e) => setWTo(e.target.value)} className="bg-background border-border font-mono text-xs" />
           <div className="flex items-center gap-3">
             <Switch id="withdraw-all" checked={withdrawAll} onCheckedChange={setWithdrawAll} />
             <Label htmlFor="withdraw-all" className="text-sm text-foreground">{withdrawAll ? "Withdraw full balance" : "Specific amount"}</Label>
           </div>
           {!withdrawAll && (
             <div className="flex gap-2">
-              <Input placeholder="Amount" type="number" value={wAmount} onChange={(e) => setWAmount(e.target.value)} className="bg-background border-border text-sm flex-1" />
-              <Input placeholder="Decimals" type="number" value={wDecimals} onChange={(e) => setWDecimals(e.target.value)} className="bg-background border-border text-sm w-20" />
+              <NumericInput placeholder="Amount"  value={wAmount} onChange={(e) => setWAmount(e.target.value)} className="bg-background border-border text-sm flex-1" />
+              <NumericInput placeholder="Decimals"  value={wDecimals} onChange={(e) => setWDecimals(e.target.value)} className="bg-background border-border text-sm w-20" />
             </div>
           )}
           <SubmitButton onClick={() => withdrawHook.withdrawToken(wTokenAddr as `0x${string}`, wTo as `0x${string}`, wAmount, Number(wDecimals), withdrawAll)} isPending={withdrawHook.isPending} isConfirming={withdrawHook.isConfirming} disabled={!isValidAddress(wTokenAddr) || !isValidAddress(wTo) || (!withdrawAll && !wAmount)} label="Withdraw" />

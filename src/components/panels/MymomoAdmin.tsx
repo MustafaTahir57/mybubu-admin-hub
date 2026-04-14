@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { useAccount } from "wagmi";
 import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair } from "@/hooks/datasenders/useMymomoWrite";
 import { Percent, ShoppingCart, ArrowLeftRight } from "lucide-react";
@@ -56,9 +57,7 @@ export function MymomoAdmin() {
             Sell tax in basis points (/10000). Default: 1000 (10%). Half burned, half to foundation.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="Basis points (e.g. 1000 = 10%)"
-              type="number"
+            <NumericInput              placeholder="Basis points (e.g. 1000 = 10%)"
               value={sellTax}
               onChange={(e) => setSellTax(e.target.value)}
               className="bg-background border-border text-sm"
@@ -83,9 +82,7 @@ export function MymomoAdmin() {
             Buy tax in basis points (/10000). Default: 10000 (100%) — blocks buying. Entire amount burned.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="Basis points (e.g. 10000 = 100%)"
-              type="number"
+            <NumericInput              placeholder="Basis points (e.g. 10000 = 100%)"
               value={buyTax}
               onChange={(e) => setBuyTax(e.target.value)}
               className="bg-background border-border text-sm"
@@ -110,8 +107,7 @@ export function MymomoAdmin() {
             Set DEX pair address for tax logic. Also approves max uint256 to PancakeSwap router.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="Pair address (0x...)"
+            <Input              placeholder="Pair address (0x...)"
               value={swapPair}
               onChange={(e) => setSwapPair(e.target.value)}
               className="bg-background border-border font-mono text-xs"
