@@ -63,7 +63,7 @@ export function MymomoAdmin() {
               onChange={(e) => setSellTax(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => sellTaxHook.setSellTaxPercent(BigInt(sellTax || "0"))}
               isPending={sellTaxHook.isPending}
               isConfirming={sellTaxHook.isConfirming}
@@ -89,7 +89,7 @@ export function MymomoAdmin() {
               onChange={(e) => setBuyTax(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => buyTaxHook.setBuyTaxPercent(BigInt(buyTax || "0"))}
               isPending={buyTaxHook.isPending}
               isConfirming={buyTaxHook.isConfirming}
@@ -115,7 +115,7 @@ export function MymomoAdmin() {
               onChange={(e) => setSwapPair(e.target.value)}
               className="bg-background border-border font-mono text-xs"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => swapPairHook.setSwapPair(swapPair as `0x${string}`)}
               isPending={swapPairHook.isPending}
               isConfirming={swapPairHook.isConfirming}

@@ -165,7 +165,7 @@ export function TokenAdmin() {
             <Button variant="outline" size="sm" onClick={addAddressField}>
               <Plus className="h-4 w-4 mr-1" /> Add Address
             </Button>
-            <SubmitButton onClick={handleExcludeFromFee} isPending={excludeFee.isPending} isConfirming={excludeFee.isConfirming} />
+            <SubmitButton isConnected={isConnected} onClick={handleExcludeFromFee} isPending={excludeFee.isPending} isConfirming={excludeFee.isConfirming} />
           </div>
         </SectionCard>
 
@@ -181,7 +181,7 @@ export function TokenAdmin() {
               onChange={(e) => setSellRateInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => sellRateHook.setSellRate(BigInt(sellRate || "0"))}
               isPending={sellRateHook.isPending}
               isConfirming={sellRateHook.isConfirming}
@@ -214,7 +214,7 @@ export function TokenAdmin() {
               onChange={(e) => setWithdrawAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => withdrawEthHook.withdrawEth(withdrawRecipient as `0x${string}`, withdrawAmount)}
               isPending={withdrawEthHook.isPending}
               isConfirming={withdrawEthHook.isConfirming}
@@ -253,7 +253,7 @@ export function TokenAdmin() {
               onChange={(e) => setTokenDecimals(e.target.value)}
               className="bg-background border-border text-sm w-20"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() =>
                 withdrawTokenHook.withdrawalToken(
                   tokenAddr as `0x${string}`,
@@ -281,7 +281,7 @@ export function TokenAdmin() {
               onChange={(e) => setMaxAmountInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => maxAmountHook.setMaxAmount(maxAmount)}
               isPending={maxAmountHook.isPending}
               isConfirming={maxAmountHook.isConfirming}
@@ -304,7 +304,7 @@ export function TokenAdmin() {
               onChange={(e) => setMinAmountInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => minAmountHook.setMinAmount(minAmount)}
               isPending={minAmountHook.isPending}
               isConfirming={minAmountHook.isConfirming}
@@ -332,7 +332,7 @@ export function TokenAdmin() {
               onChange={(e) => setTransferLimitPeriod(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() =>
                 transferLimitHook.setTransferLimit(
                   parseUnits(transferLimitAmount || "0", 18),

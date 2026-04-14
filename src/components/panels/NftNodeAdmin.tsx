@@ -113,7 +113,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setMintPrice(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => mintPriceHook.setMintPriceUSDT(mintPrice)}
               isPending={mintPriceHook.isPending}
               isConfirming={mintPriceHook.isConfirming}
@@ -136,7 +136,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setMaxSupply(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => maxSupplyHook.setMaxSupply(maxSupply)}
               isPending={maxSupplyHook.isPending}
               isConfirming={maxSupplyHook.isConfirming}
@@ -159,7 +159,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setDividendAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => dividendHook.distributeDividends(dividendAmount)}
               isPending={dividendHook.isPending}
               isConfirming={dividendHook.isConfirming}
@@ -174,7 +174,7 @@ export function NftNodeAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraws ALL USDT balance to treasuryWallet. This is the accumulated USDT from mint payments.
           </p>
-          <SubmitButton
+          <SubmitButton isConnected={isConnected}
             onClick={() => withdrawFundsHook.withdrawUSDTFunds()}
             isPending={withdrawFundsHook.isPending}
             isConfirming={withdrawFundsHook.isConfirming}
@@ -201,7 +201,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setUsdtAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => withdrawToHook.withdrawUSDTTo(usdtRecipient as `0x${string}`, usdtAmount)}
               isPending={withdrawToHook.isPending}
               isConfirming={withdrawToHook.isConfirming}
@@ -216,7 +216,7 @@ export function NftNodeAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraws BNB ABOVE unclaimed dividends only. Protects user claims — won't drain below what users are owed. Sends to owner.
           </p>
-          <SubmitButton
+          <SubmitButton isConnected={isConnected}
             onClick={() => emergencyHook.emergencyWithdraw()}
             isPending={emergencyHook.isPending}
             isConfirming={emergencyHook.isConfirming}
