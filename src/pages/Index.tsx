@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BarChart3, Search, Coins, ScrollText, TrendingUp } from "lucide-react";
+import { BarChart3, Search, Coins, ScrollText, TrendingUp, Diamond } from "lucide-react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopBar } from "@/components/TopBar";
 import { AnalyticsDashboard } from "@/components/panels/AnalyticsDashboard";
@@ -7,8 +7,9 @@ import { UserLookup } from "@/components/panels/UserLookup";
 import { TokenAdmin } from "@/components/panels/TokenAdmin";
 import { EventLogViewer } from "@/components/panels/EventLogViewer";
 import { LiquidityMonitor } from "@/components/panels/LiquidityMonitor";
+import { NftNodeAdmin } from "@/components/panels/NftNodeAdmin";
 
-export type PanelId = "analytics" | "user-lookup" | "token-admin" | "event-log" | "liquidity";
+export type PanelId = "analytics" | "user-lookup" | "token-admin" | "event-log" | "liquidity" | "nft-node";
 
 export const NAV_ITEMS = [
   { id: "analytics" as PanelId, label: "Analytics", icon: BarChart3 },
@@ -16,6 +17,7 @@ export const NAV_ITEMS = [
   { id: "token-admin" as PanelId, label: "MYBUBU Contract", icon: Coins },
   { id: "event-log" as PanelId, label: "Swap Contract", icon: ScrollText },
   { id: "liquidity" as PanelId, label: "Liquidity", icon: TrendingUp },
+  { id: "nft-node" as PanelId, label: "NFT Node", icon: Diamond },
 ];
 
 const PANEL_TITLES: Record<PanelId, string> = {
@@ -24,6 +26,7 @@ const PANEL_TITLES: Record<PanelId, string> = {
   "token-admin": "🪙 MYBUBU Contract",
   "event-log": "📜 Swap Contract",
   liquidity: "📈 Liquidity Monitor",
+  "nft-node": "💎 NFT Node",
 };
 
 const DashboardLayout = () => {
@@ -36,6 +39,7 @@ const DashboardLayout = () => {
       case "token-admin": return <TokenAdmin />;
       case "event-log": return <EventLogViewer />;
       case "liquidity": return <LiquidityMonitor />;
+      case "nft-node": return <NftNodeAdmin />;
     }
   };
 
