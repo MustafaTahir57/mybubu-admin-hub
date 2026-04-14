@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { Wallet, ChevronRight } from "lucide-react";
+import { Wallet, ChevronRight, Menu, X } from "lucide-react";
 import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS, type PanelId } from "@/pages/Index";
 import { WalletConnectModal } from "@/components/WalletConnectModal";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface AppSidebarProps {
   activePanel: PanelId;
   onNavigate: (panel: PanelId) => void;
 }
 
-export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
+function SidebarContent({ activePanel, onNavigate, onItemClick }: AppSidebarProps & { onItemClick?: () => void }) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
@@ -20,7 +21,7 @@ export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
     : "";
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[240px] bg-sidebar border-r border-border flex flex-col z-50">
+    <>
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <h1 className="text-xl font-bold text-foreground">
@@ -36,7 +37,10 @@ export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => {
+                onNavigate(item.id);
+                onItemClick?.();
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-primary/15 text-primary"
@@ -80,6 +84,41 @@ export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
         )}
       </div>
       <WalletConnectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
-    </aside>
+    </>
+  );
+}
+
+export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="fixed left-0 top-0 h-screen w-[240px] bg-sidebar border-r border-border flex-col z-50 hidden md:flex">
+        <SidebarContent activePanel={activePanel} onNavigate={onNavigate} />
+      </aside>
+
+      {/* Mobile hamburger button */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-3 left-3 z-50 md:hidden h-9 w-9"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[260px] p-0 bg-sidebar border-border">
+          <div className="flex flex-col h-full">
+            <SidebarContent
+              activePanel={activePanel}
+              onNavigate={onNavigate}
+              onItemClick={() => setMobileOpen(false)}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

@@ -50,9 +50,9 @@ const DashboardLayout = () => {
   return (
     <div className="flex min-h-screen bg-background">
       <AppSidebar activePanel={activePanel} onNavigate={setActivePanel} />
-      <div className="flex-1 flex flex-col ml-[240px]">
+      <div className="flex-1 flex flex-col md:ml-[240px]">
         <TopBar title={PANEL_TITLES[activePanel]} />
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
           {renderPanel()}
         </main>
       </div>
