@@ -1,6 +1,6 @@
 
 export const ACTIVE_CHAIN_ID =
-  Number(import.meta.env.VITE_ACTIVE_CHAIN_ID) || 56;
+  Number(import.meta.env.VITE_ACTIVE_CHAIN_ID) || 97;
   
 export const CONTRACT_ADDRESSES = {
   // BSC Mainnet
