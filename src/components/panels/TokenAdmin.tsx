@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
-import { Plus, X, Percent, ArrowDownToLine, ArrowUpFromLine, Coins, Send } from "lucide-react";
+import { Plus, X, Percent, ArrowDownToLine, ArrowUpFromLine, Coins, Send, Timer } from "lucide-react";
 import { useAccount } from "wagmi";
 import { useExcludeFromFeeBatch } from "@/hooks/datasenders/useExcludeFromFeeBatch";
 import {
@@ -16,6 +16,7 @@ import {
   useWithdrawalToken,
   useSetMaxAmount,
   useSetMinAmount,
+  useSetTransferLimit,
 } from "@/hooks/datasenders/useMybubuWrite";
 import { parseUnits } from "viem";
 
@@ -51,6 +52,11 @@ export function TokenAdmin() {
   const maxAmountHook = useSetMaxAmount();
   const [minAmount, setMinAmountInput] = useState("");
   const minAmountHook = useSetMinAmount();
+
+  // Transfer Limit
+  const [transferLimitAmount, setTransferLimitAmount] = useState("");
+  const [transferLimitPeriod, setTransferLimitPeriod] = useState("");
+  const transferLimitHook = useSetTransferLimit();
 
   const addAddressField = () => setFeeAddresses((prev) => [...prev, ""]);
   const removeAddressField = (i: number) => setFeeAddresses((prev) => prev.filter((_, idx) => idx !== i));
@@ -308,7 +314,47 @@ export function TokenAdmin() {
               disabled={!minAmount}
               label="Set Min"
             />
+           </div>
+        </SectionCard>
+
+        {/* Set Transfer Limit */}
+        <SectionCard title="Set Transfer Limit" icon={<Timer className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Set max token transfer amount per time period. Amount in tokens (18 decimals), period in seconds. E.g., 1000 tokens per 86400s (24h).
+          </p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Amount (tokens)"
+              type="number"
+              value={transferLimitAmount}
+              onChange={(e) => setTransferLimitAmount(e.target.value)}
+              className="bg-background border-border text-sm"
+            />
+            <Input
+              placeholder="Period (seconds)"
+              type="number"
+              value={transferLimitPeriod}
+              onChange={(e) => setTransferLimitPeriod(e.target.value)}
+              className="bg-background border-border text-sm"
+            />
+            <SubmitButton
+              onClick={() =>
+                transferLimitHook.setTransferLimit(
+                  parseUnits(transferLimitAmount || "0", 18),
+                  BigInt(transferLimitPeriod || "0")
+                )
+              }
+              isPending={transferLimitHook.isPending}
+              isConfirming={transferLimitHook.isConfirming}
+              disabled={!transferLimitAmount || !transferLimitPeriod}
+              label="Set Limit"
+            />
           </div>
+          {transferLimitPeriod && (
+            <p className="text-xs text-accent-foreground">
+              = {(Number(transferLimitPeriod) / 3600).toFixed(1)} hours
+            </p>
+          )}
         </SectionCard>
       </div>
 
