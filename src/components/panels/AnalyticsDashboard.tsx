@@ -1,19 +1,11 @@
-import { Coins, Users, Image, DollarSign, Layers, TrendingUp } from "lucide-react";
+import { Coins, Users, Image, DollarSign, Layers, TrendingUp, Wallet, BarChart3 } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { useDashboardStats, useChainContracts } from "@/hooks/useContractData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-// Mock chart data (would need an indexer for real historical data)
-const mockVolumeData = [
-  { day: "Mon", volume: 12400 },
-  { day: "Tue", volume: 18200 },
-  { day: "Wed", volume: 15600 },
-  { day: "Thu", volume: 22100 },
-  { day: "Fri", volume: 19800 },
-  { day: "Sat", volume: 24500 },
-  { day: "Sun", volume: 21300 },
-];
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { useReadContract, useBalance } from "wagmi";
+import { formatUnits } from "viem";
+import { MYBOO_PRESALE_ABI, NFT_NODE_ABI, MYBUBU_ABI, MYMOMO_ABI } from "@/config/contracts";
 
 function formatNumber(value: string): string {
   const num = parseFloat(value);
@@ -24,8 +16,67 @@ function formatNumber(value: string): string {
   return num.toFixed(2);
 }
 
+function formatUsd(value: string): string {
+  const num = parseFloat(value);
+  if (isNaN(num)) return "$0";
+  return `$${formatNumber(value)}`;
+}
+
 export function AnalyticsDashboard() {
+  const contracts = useChainContracts();
   const { mybooSupply, mybubuSupply, nftSupply, isLoading } = useDashboardStats();
+
+  // Presale info
+  const presaleInfo = useReadContract({
+    address: contracts.MYBOO_PRESALE,
+    abi: MYBOO_PRESALE_ABI,
+    functionName: "getPresaleInfo",
+  });
+
+  const presaleData = presaleInfo.data as
+    | [bigint, bigint, bigint, bigint, bigint, bigint, boolean, bigint, bigint]
+    | undefined;
+
+  const totalRaisedUSD = presaleData ? formatUnits(presaleData[2], 18) : "0";
+  const totalRaisedUSDT = presaleData ? formatUnits(presaleData[3], 18) : "0";
+  const totalRaisedBNB = presaleData ? formatUnits(presaleData[4], 18) : "0";
+  const totalTokensSold = presaleData ? formatUnits(presaleData[5], 18) : "0";
+  const presaleActive = presaleData ? presaleData[6] : false;
+  const bnbPriceUSD = presaleData ? formatUnits(presaleData[7], 18) : "0";
+  const remainingTokens = presaleData ? formatUnits(presaleData[8], 18) : "0";
+
+  // NFT Node stats
+  const nftStats = useReadContract({
+    address: contracts.NFT_NODE,
+    abi: NFT_NODE_ABI,
+    functionName: "getFullStats",
+  });
+
+  const nftData = nftStats.data as readonly bigint[] | undefined;
+  const totalMinted = nftData ? nftData[0].toString() : "0";
+  const nftMaxSupply = nftData ? nftData[1].toString() : "0";
+  const mintPriceUSDT = nftData ? formatUnits(nftData[2], 18) : "0";
+  const totalUSDTCollected = nftData ? formatUnits(nftData[3], 18) : "0";
+
+  // MYBUBU sell rate
+  const sellRate = useReadContract({
+    address: contracts.MYBUBU_TOKEN,
+    abi: MYBUBU_ABI,
+    functionName: "sellRate",
+  });
+  const sellRateValue = sellRate.data ? Number(sellRate.data) : 0;
+
+  // MYMOMO reward pool
+  const rewardPool = useReadContract({
+    address: contracts.MYMOMO_TOKEN,
+    abi: MYMOMO_ABI,
+    functionName: "mymomoRewardPool",
+  });
+  const rewardPoolFormatted = rewardPool.data ? formatUnits(rewardPool.data as bigint, 18) : "0";
+
+  // Contract BNB balances
+  const mybubuBal = useBalance({ address: contracts.MYBUBU_TOKEN });
+  const swapBal = useBalance({ address: contracts.SWAP });
 
   const stats = [
     {
@@ -43,30 +94,66 @@ export function AnalyticsDashboard() {
       isError: mybooSupply.isError,
     },
     {
-      title: "Total NFT Nodes Minted",
-      value: formatNumber(nftSupply.formatted),
+      title: "NFT Nodes Minted",
+      value: `${totalMinted} / ${nftMaxSupply}`,
       icon: <Image className="h-5 w-5" />,
-      isLoading: nftSupply.isLoading,
-      isError: nftSupply.isError,
+      isLoading: nftStats.isLoading,
+      isError: nftStats.isError,
+      subtitle: `Mint price: ${formatNumber(mintPriceUSDT)} USDT`,
     },
     {
-      title: "Presale USDT Raised",
-      value: "—",
+      title: "Presale USD Raised",
+      value: formatUsd(totalRaisedUSD),
       icon: <DollarSign className="h-5 w-5" />,
-      subtitle: "Connect to view",
+      isLoading: presaleInfo.isLoading,
+      isError: presaleInfo.isError,
+      subtitle: presaleActive ? "🟢 Presale Active" : "🔴 Presale Inactive",
     },
     {
-      title: "Total Staked in MyMomo",
-      value: "—",
-      icon: <Users className="h-5 w-5" />,
-      subtitle: "Coming soon",
-    },
-    {
-      title: "Current Token Price",
-      value: "$0.001",
+      title: "Presale Tokens Sold",
+      value: formatNumber(totalTokensSold),
       icon: <TrendingUp className="h-5 w-5" />,
-      subtitle: "Hardcoded — PancakeSwap integration pending",
+      isLoading: presaleInfo.isLoading,
+      isError: presaleInfo.isError,
+      subtitle: `${formatNumber(remainingTokens)} remaining`,
     },
+    {
+      title: "MyMomo Reward Pool",
+      value: formatNumber(rewardPoolFormatted),
+      icon: <Users className="h-5 w-5" />,
+      isLoading: rewardPool.isLoading,
+      isError: rewardPool.isError,
+      subtitle: "MYBUBU tokens in pool",
+    },
+    {
+      title: "MYBUBU Sell Tax",
+      value: `${(sellRateValue / 100).toFixed(2)}%`,
+      icon: <BarChart3 className="h-5 w-5" />,
+      isLoading: sellRate.isLoading,
+      isError: sellRate.isError,
+      subtitle: `${sellRateValue} basis points`,
+    },
+    {
+      title: "BNB Price (Oracle)",
+      value: formatUsd(bnbPriceUSD),
+      icon: <Wallet className="h-5 w-5" />,
+      isLoading: presaleInfo.isLoading,
+      isError: presaleInfo.isError,
+    },
+    {
+      title: "NFT USDT Collected",
+      value: formatUsd(totalUSDTCollected),
+      icon: <DollarSign className="h-5 w-5" />,
+      isLoading: nftStats.isLoading,
+      isError: nftStats.isError,
+    },
+  ];
+
+  // Chart: presale breakdown
+  const chartData = [
+    { name: "USDT Raised", value: parseFloat(totalRaisedUSDT), color: "hsl(45, 100%, 55%)" },
+    { name: "BNB Raised (USD)", value: parseFloat(totalRaisedBNB) * parseFloat(bnbPriceUSD), color: "hsl(270, 80%, 60%)" },
+    { name: "NFT USDT", value: parseFloat(totalUSDTCollected), color: "hsl(160, 70%, 50%)" },
   ];
 
   return (
@@ -79,32 +166,30 @@ export function AnalyticsDashboard() {
 
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-foreground">Daily Volume (Mock Data)</CardTitle>
+          <CardTitle className="text-foreground">Revenue Breakdown (USD)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={mockVolumeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 18%)" />
-                <XAxis dataKey="day" stroke="hsl(220, 15%, 65%)" fontSize={12} />
-                <YAxis stroke="hsl(220, 15%, 65%)" fontSize={12} />
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${formatNumber(String(v))}`} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(220, 18%, 12%)",
-                    border: "1px solid hsl(220, 15%, 18%)",
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
                     borderRadius: "8px",
-                    color: "white",
+                    color: "hsl(var(--foreground))",
                   }}
+                  formatter={(value: number) => [`$${formatNumber(String(value))}`, "Amount"]}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="volume"
-                  stroke="hsl(270, 80%, 60%)"
-                  strokeWidth={2}
-                  dot={{ fill: "hsl(270, 80%, 60%)", r: 4 }}
-                  activeDot={{ r: 6, fill: "hsl(45, 100%, 55%)" }}
-                />
-              </LineChart>
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
