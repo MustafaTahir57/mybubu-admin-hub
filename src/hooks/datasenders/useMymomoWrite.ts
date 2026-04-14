@@ -1,45 +1,50 @@
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { MYMOMO_ABI } from "@/config/contracts";
-import { useChainContracts } from "@/hooks/useContractData";
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useChainId } from "wagmi";
+import { MYMOMO_ABI, getContracts } from "@/config/contracts";
 import { toast } from "sonner";
 import { useEffect } from "react";
 
-function useMymomoBaseWrite() {
-  const contracts = useChainContracts();
-  const { writeContract, data: hash, isPending, error } = useWriteContract();
+function useMymomoBaseWrite(successMessage: string) {
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
+  const { address: account } = useAccount();
+  const { writeContract, data: hash, isPending, error, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
 
-  useEffect(() => {
-    if (isSuccess) toast.success("Transaction confirmed!");
-    if (error) toast.error(error.message?.slice(0, 100) || "Transaction failed");
-  }, [isSuccess, error]);
+  useEffect(() => { if (isSuccess) toast.success(successMessage); }, [isSuccess]);
+  useEffect(() => { if (error) toast.error(error.message?.slice(0, 100) || "Transaction failed"); }, [error]);
 
-  return { writeContract, hash, isPending, isConfirming, isSuccess, contractAddress: contracts.MYMOMO_TOKEN };
+  return { writeContract, contracts, account, hash, isPending, isConfirming, isSuccess, error, reset };
 }
 
 export function useSetSellTaxPercent() {
-  const { writeContract, contractAddress, ...rest } = useMymomoBaseWrite();
+  const { writeContract, contracts, account, ...rest } = useMymomoBaseWrite("Sell tax updated!");
   return {
     ...rest,
-    setSellTaxPercent: (percent: bigint) =>
-      writeContract({ address: contractAddress, abi: MYMOMO_ABI, functionName: "setSellTaxPercent", args: [percent] }),
+    setSellTaxPercent: (percent: bigint) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSellTaxPercent", args: [percent], account, });
+    },
   };
 }
 
 export function useSetBuyTaxPercent() {
-  const { writeContract, contractAddress, ...rest } = useMymomoBaseWrite();
+  const { writeContract, contracts, account, ...rest } = useMymomoBaseWrite("Buy tax updated!");
   return {
     ...rest,
-    setBuyTaxPercent: (percent: bigint) =>
-      writeContract({ address: contractAddress, abi: MYMOMO_ABI, functionName: "setBuyTaxPercent", args: [percent] }),
+    setBuyTaxPercent: (percent: bigint) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setBuyTaxPercent", args: [percent], account, });
+    },
   };
 }
 
 export function useSetSwapPair() {
-  const { writeContract, contractAddress, ...rest } = useMymomoBaseWrite();
+  const { writeContract, contracts, account, ...rest } = useMymomoBaseWrite("Swap pair updated!");
   return {
     ...rest,
-    setSwapPair: (pair: `0x${string}`) =>
-      writeContract({ address: contractAddress, abi: MYMOMO_ABI, functionName: "setSwapPair", args: [pair] }),
+    setSwapPair: (pair: `0x${string}`) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSwapPair", args: [pair], account, });
+    },
   };
 }

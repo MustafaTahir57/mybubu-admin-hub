@@ -43,7 +43,7 @@ const DashboardLayout = () => {
       case "event-log": return <EventLogViewer />;
       case "liquidity": return <LiquidityMonitor />;
       case "nft-node": return <NftNodeAdmin />;
-    }
+      case "mymomo": return <MymomoAdmin />;
   };
 
   return (
