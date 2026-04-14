@@ -1,10 +1,16 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts, useTokenSupply } from "@/hooks/useContractData";
 import { StatCard } from "@/components/StatCard";
-import { Coins, Flame, Layers } from "lucide-react";
+import { Coins, Flame, Layers, Plus, X } from "lucide-react";
 import { useAccount } from "wagmi";
+import { useExcludeFromFeeBatch } from "@/hooks/datasenders/useExcludeFromFeeBatch";
 
 function formatNumber(value: string): string {
   const num = parseFloat(value);
@@ -19,6 +25,25 @@ export function TokenAdmin() {
   const { isConnected } = useAccount();
   const mybooSupply = useTokenSupply(contracts.MYBOO_TOKEN);
   const mybubuSupply = useTokenSupply(contracts.MYBUBU_TOKEN);
+
+  // Exclude from fee batch state
+  const [feeAddresses, setFeeAddresses] = useState<string[]>([""]);
+  const [excluded, setExcluded] = useState(true);
+  const { excludeFromFeeBatch, isPending, isConfirming } = useExcludeFromFeeBatch();
+
+  const addAddressField = () => setFeeAddresses((prev) => [...prev, ""]);
+  const removeAddressField = (index: number) =>
+    setFeeAddresses((prev) => prev.filter((_, i) => i !== index));
+  const updateAddress = (index: number, value: string) =>
+    setFeeAddresses((prev) => prev.map((a, i) => (i === index ? value : a)));
+
+  const handleExcludeFromFee = () => {
+    const valid = feeAddresses
+      .map((a) => a.trim())
+      .filter((a) => /^0x[a-fA-F0-9]{40}$/.test(a)) as `0x${string}`[];
+    if (valid.length === 0) return;
+    excludeFromFeeBatch(valid, excluded);
+  };
 
   const contractList = [
     { name: "MyBoo Token", address: contracts.MYBOO_TOKEN },
@@ -56,20 +81,65 @@ export function TokenAdmin() {
         />
       </div>
 
-      {/* Admin Actions */}
+      {/* Exclude From Fee Batch */}
       <Card className="bg-card border-border">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-foreground">Admin Actions</CardTitle>
+          <CardTitle className="text-foreground">Exclude From Fee (Batch)</CardTitle>
           <Badge variant="secondary" className="text-xs">
             {isConnected ? "Connected" : "Not authorized"}
           </Badge>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            {isConnected
-              ? "Admin actions (mint, burn, pause) will be available when connected as contract owner. Currently read-only."
-              : "Connect your wallet to access admin functions. Only the contract owner can perform admin actions."}
+            Batch set/unset tax exemption for multiple addresses. Tax exempt addresses skip all sell fees and transfer limits.
           </p>
+
+          <div className="flex items-center gap-3">
+            <Switch
+              id="excluded-toggle"
+              checked={excluded}
+              onCheckedChange={setExcluded}
+            />
+            <Label htmlFor="excluded-toggle" className="text-sm text-foreground">
+              {excluded ? "Exclude from fees (exempt)" : "Include in fees (not exempt)"}
+            </Label>
+          </div>
+
+          <div className="space-y-2">
+            {feeAddresses.map((addr, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  placeholder="0x... wallet address"
+                  value={addr}
+                  onChange={(e) => updateAddress(i, e.target.value)}
+                  className="bg-background border-border font-mono text-sm"
+                />
+                {feeAddresses.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeAddressField(i)}
+                    className="shrink-0 text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="outline" size="sm" onClick={addAddressField}>
+              <Plus className="h-4 w-4 mr-1" /> Add Address
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleExcludeFromFee}
+              disabled={!isConnected || isPending || isConfirming}
+            >
+              {isPending ? "Confirming…" : isConfirming ? "Waiting…" : "Submit Transaction"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
