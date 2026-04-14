@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
 import { DollarSign, Hash, Banknote, Wallet, Send, AlertTriangle } from "lucide-react";
