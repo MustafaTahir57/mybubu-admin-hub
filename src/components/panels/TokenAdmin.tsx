@@ -359,9 +359,9 @@ export function TokenAdmin() {
         <CardContent>
           <div className="space-y-3">
             {contractList.map((c) => (
-              <div key={c.name} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                <span className="text-sm font-medium text-foreground">{c.name}</span>
-                <CopyAddress address={c.address} truncate={false} />
+              <div key={c.name} className="flex items-center justify-between py-2 border-b border-border last:border-0 gap-2">
+                <span className="text-sm font-medium text-foreground shrink-0">{c.name}</span>
+                <CopyAddress address={c.address} truncate />
               </div>
             ))}
           </div>
