@@ -65,8 +65,8 @@ export function EventLogViewer() {
           <p className="text-xs text-muted-foreground">
             Withdraw any ERC20 token. Toggle "Withdraw All" to withdraw the full balance.
           </p>
-          <Inputplaceholder="Token address (0x...)" value={wTokenAddr} onChange={(e) => setWTokenAddr(e.target.value)} className="bg-background border-border font-mono text-xs" />
-          <Inputplaceholder="Recipient address (0x...)" value={wTo} onChange={(e) => setWTo(e.target.value)} className="bg-background border-border font-mono text-xs" />
+          <Inputplaceholder="Token address (0x...)" value={wTokenAddr} onChange={(e) => setWTokenAddr(e.target.value)} className="bg-background border-border font-mono text-xs" />
+          <Inputplaceholder="Recipient address (0x...)" value={wTo} onChange={(e) => setWTo(e.target.value)} className="bg-background border-border font-mono text-xs" />
           <div className="flex items-center gap-3">
             <Switch id="withdraw-all" checked={withdrawAll} onCheckedChange={setWithdrawAll} />
             <Label htmlFor="withdraw-all" className="text-sm text-foreground">{withdrawAll ? "Withdraw full balance" : "Specific amount"}</Label>
