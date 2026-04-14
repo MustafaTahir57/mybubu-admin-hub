@@ -52,7 +52,7 @@ export function AnalyticsDashboard() {
     functionName: "getFullStats",
   });
 
-  const nftData = nftStats.data as [bigint, bigint, bigint, bigint, bigint, bigint] | undefined;
+  const nftData = nftStats.data as readonly bigint[] | undefined;
   const totalMinted = nftData ? nftData[0].toString() : "0";
   const nftMaxSupply = nftData ? nftData[1].toString() : "0";
   const mintPriceUSDT = nftData ? formatUnits(nftData[2], 18) : "0";
