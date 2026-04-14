@@ -25,12 +25,17 @@ export function useExcludeFromFeeBatch() {
   }, [error]);
 
   const excludeFromFeeBatch = (addresses: `0x${string}`[], excluded: boolean) => {
+    if (!account) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
     writeContract({
       address: contracts.MYBUBU_TOKEN,
       abi: MYBUBU_ABI,
       functionName: "excludeFromFeeBatch",
       args: [addresses, excluded],
-    });
+      account,
+    } as any);
   };
 
   return {
