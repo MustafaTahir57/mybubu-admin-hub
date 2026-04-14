@@ -1,13 +1,13 @@
-import { useReadContract, useReadContracts, useAccount, useChainId } from "wagmi";
+import { useReadContract, useChainId } from "wagmi";
 import { formatUnits } from "viem";
-import { getContracts, ERC20_ABI, PRESALE_ABI, MYBUBU_ABI, NFT_NODE_ABI } from "@/config/contracts";
+import { getContracts, MYBOO_TOKEN_ABI, MYBUBU_ABI } from "@/config/contracts";
 
 export function useChainContracts() {
   const chainId = useChainId();
   return getContracts(chainId);
 }
 
-export function useTokenSupply(tokenAddress: `0x${string}`, abi: readonly any[] = ERC20_ABI) {
+export function useTokenSupply(tokenAddress: `0x${string}`, abi: readonly any[] = MYBOO_TOKEN_ABI) {
   const result = useReadContract({
     address: tokenAddress,
     abi,
@@ -23,7 +23,7 @@ export function useTokenSupply(tokenAddress: `0x${string}`, abi: readonly any[] 
 export function useTokenBalance(tokenAddress: `0x${string}`, account?: `0x${string}`) {
   const result = useReadContract({
     address: tokenAddress,
-    abi: ERC20_ABI,
+    abi: MYBOO_TOKEN_ABI,
     functionName: "balanceOf",
     args: account ? [account] : undefined,
     query: { enabled: !!account },
@@ -44,7 +44,16 @@ export function useUserLookup(address?: `0x${string}`) {
 
   const presaleInfo = useReadContract({
     address: contracts.MYBOO_PRESALE,
-    abi: PRESALE_ABI,
+    abi: [{
+      inputs: [{ internalType: "address", name: "user", type: "address" }],
+      name: "getUserInfo",
+      outputs: [
+        { internalType: "uint256", name: "tokensBought", type: "uint256" },
+        { internalType: "uint256", name: "usdSpent", type: "uint256" },
+      ],
+      stateMutability: "view",
+      type: "function",
+    }] as const,
     functionName: "getUserInfo",
     args: address ? [address] : undefined,
     query: { enabled },
@@ -60,7 +69,7 @@ export function useUserLookup(address?: `0x${string}`) {
 
   const nftBalance = useReadContract({
     address: contracts.NFT_NODE,
-    abi: NFT_NODE_ABI,
+    abi: MYBOO_TOKEN_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
     query: { enabled },
@@ -87,7 +96,7 @@ export function useDashboardStats() {
 
   const mybooSupply = useTokenSupply(contracts.MYBOO_TOKEN);
   const mybubuSupply = useTokenSupply(contracts.MYBUBU_TOKEN);
-  const nftSupply = useTokenSupply(contracts.NFT_NODE, NFT_NODE_ABI);
+  const nftSupply = useTokenSupply(contracts.NFT_NODE, MYBOO_TOKEN_ABI);
 
   return {
     mybooSupply,
