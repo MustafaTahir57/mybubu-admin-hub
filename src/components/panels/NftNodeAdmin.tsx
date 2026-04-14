@@ -19,77 +19,73 @@ import {
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
+const SectionCard = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">
+        {icon}
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({
+  onClick,
+  isPending,
+  isConfirming,
+  label = "Submit",
+  disabled = false,
+  variant = "default" as "default" | "destructive",
+  isConnected = true,
+}: {
+  onClick: () => void;
+  isPending: boolean;
+  isConfirming: boolean;
+  label?: string;
+  disabled?: boolean;
+  variant?: "default" | "destructive";
+  isConnected?: boolean;
+}) => (
+  <Button
+    size="sm"
+    variant={variant}
+    onClick={onClick}
+    disabled={!isConnected || isPending || isConfirming || disabled}
+  >
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function NftNodeAdmin() {
   const contracts = useChainContracts();
   const { isConnected } = useAccount();
 
-  // Mint price
   const [mintPrice, setMintPrice] = useState("");
   const mintPriceHook = useSetMintPriceUSDT();
 
-  // Max supply
   const [maxSupply, setMaxSupply] = useState("");
   const maxSupplyHook = useSetMaxSupply();
 
-  // Distribute dividends
   const [dividendAmount, setDividendAmount] = useState("");
   const dividendHook = useDistributeDividends();
 
-  // Withdraw USDT funds (all)
   const withdrawFundsHook = useWithdrawUSDTFunds();
 
-  // Withdraw USDT to
   const [usdtRecipient, setUsdtRecipient] = useState("");
   const [usdtAmount, setUsdtAmount] = useState("");
   const withdrawToHook = useWithdrawUSDTTo();
 
-  // Emergency withdraw
   const emergencyHook = useEmergencyWithdraw();
-
-  const SectionCard = ({
-    title,
-    icon,
-    children,
-  }: {
-    title: string;
-    icon: React.ReactNode;
-    children: React.ReactNode;
-  }) => (
-    <Card className="bg-card border-border">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-foreground flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-
-  const SubmitButton = ({
-    onClick,
-    isPending,
-    isConfirming,
-    label = "Submit",
-    disabled = false,
-    variant = "default" as "default" | "destructive",
-  }: {
-    onClick: () => void;
-    isPending: boolean;
-    isConfirming: boolean;
-    label?: string;
-    disabled?: boolean;
-    variant?: "default" | "destructive";
-  }) => (
-    <Button
-      size="sm"
-      variant={variant}
-      onClick={onClick}
-      disabled={!isConnected || isPending || isConfirming || disabled}
-    >
-      {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
-    </Button>
-  );
 
   return (
     <div className="space-y-6">
