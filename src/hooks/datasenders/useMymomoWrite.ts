@@ -22,7 +22,7 @@ export function useSetSellTaxPercent() {
     ...rest,
     setSellTaxPercent: (percent: bigint) => {
       if (!account) { toast.error("Connect wallet first"); return; }
-      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSellTaxPercent", args: [percent], account, });
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSellTaxPercent", args: [percent] } as any);
     },
   };
 }
@@ -33,7 +33,7 @@ export function useSetBuyTaxPercent() {
     ...rest,
     setBuyTaxPercent: (percent: bigint) => {
       if (!account) { toast.error("Connect wallet first"); return; }
-      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setBuyTaxPercent", args: [percent], account, });
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setBuyTaxPercent", args: [percent] } as any);
     },
   };
 }
@@ -44,7 +44,7 @@ export function useSetSwapPair() {
     ...rest,
     setSwapPair: (pair: `0x${string}`) => {
       if (!account) { toast.error("Connect wallet first"); return; }
-      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSwapPair", args: [pair], account, });
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setSwapPair", args: [pair] } as any);
     },
   };
 }
