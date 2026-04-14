@@ -12,17 +12,17 @@ export type PanelId = "analytics" | "user-lookup" | "token-admin" | "event-log" 
 
 export const NAV_ITEMS = [
   { id: "analytics" as PanelId, label: "Analytics", icon: BarChart3 },
-  { id: "user-lookup" as PanelId, label: "User Lookup", icon: Search },
-  { id: "token-admin" as PanelId, label: "Token Admin", icon: Coins },
-  { id: "event-log" as PanelId, label: "Event Log", icon: ScrollText },
+  { id: "user-lookup" as PanelId, label: "MyBoo Contract", icon: Search },
+  { id: "token-admin" as PanelId, label: "MYBUBU Contract", icon: Coins },
+  { id: "event-log" as PanelId, label: "Swap Contract", icon: ScrollText },
   { id: "liquidity" as PanelId, label: "Liquidity", icon: TrendingUp },
 ];
 
 const PANEL_TITLES: Record<PanelId, string> = {
   analytics: "📊 Analytics Dashboard",
-  "user-lookup": "🔍 User Lookup",
-  "token-admin": "🪙 Token Admin",
-  "event-log": "📜 Event Log Viewer",
+  "user-lookup": "🔍 MyBoo Contract",
+  "token-admin": "🪙 MYBUBU Contract",
+  "event-log": "📜 Swap Contract",
   liquidity: "📈 Liquidity Monitor",
 };
 
