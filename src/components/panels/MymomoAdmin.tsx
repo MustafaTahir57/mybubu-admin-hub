@@ -10,6 +10,26 @@ import { Percent, ShoppingCart, ArrowLeftRight } from "lucide-react";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
+const SectionCard = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">
+        {icon}
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({ onClick, isPending, isConfirming, label = "Submit", disabled = false, isConnected = true }: {
+  onClick: () => void; isPending: boolean; isConfirming: boolean; label?: string; disabled?: boolean; isConnected?: boolean;
+}) => (
+  <Button size="sm" onClick={onClick} disabled={!isConnected || isPending || isConfirming || disabled}>
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function MymomoAdmin() {
   const { isConnected } = useAccount();
 
@@ -21,26 +41,6 @@ export function MymomoAdmin() {
 
   const [swapPair, setSwapPair] = useState("");
   const swapPairHook = useSetSwapPair();
-
-  const SectionCard = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
-    <Card className="bg-card border-border">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-foreground flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-
-  const SubmitButton = ({ onClick, isPending, isConfirming, label = "Submit", disabled = false }: {
-    onClick: () => void; isPending: boolean; isConfirming: boolean; label?: string; disabled?: boolean;
-  }) => (
-    <Button size="sm" onClick={onClick} disabled={!isConnected || isPending || isConfirming || disabled}>
-      {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
-    </Button>
-  );
 
   return (
     <div className="space-y-6">
@@ -63,7 +63,7 @@ export function MymomoAdmin() {
               onChange={(e) => setSellTax(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => sellTaxHook.setSellTaxPercent(BigInt(sellTax || "0"))}
               isPending={sellTaxHook.isPending}
               isConfirming={sellTaxHook.isConfirming}
@@ -89,7 +89,7 @@ export function MymomoAdmin() {
               onChange={(e) => setBuyTax(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => buyTaxHook.setBuyTaxPercent(BigInt(buyTax || "0"))}
               isPending={buyTaxHook.isPending}
               isConfirming={buyTaxHook.isConfirming}
@@ -115,7 +115,7 @@ export function MymomoAdmin() {
               onChange={(e) => setSwapPair(e.target.value)}
               className="bg-background border-border font-mono text-xs"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => swapPairHook.setSwapPair(swapPair as `0x${string}`)}
               isPending={swapPairHook.isPending}
               isConfirming={swapPairHook.isConfirming}

@@ -12,6 +12,23 @@ import {useDepositMybubu, useSwapWithdrawToken} from "@/hooks/datasenders/useSwa
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
+const SectionCard = ({title, icon, children}: {title: string; icon: React.ReactNode; children: React.ReactNode}) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">{icon}{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({onClick, isPending, isConfirming, label = "Submit", disabled = false, isConnected = true}: {
+  onClick: () => void; isPending: boolean; isConfirming: boolean; label?: string; disabled?: boolean; isConnected?: boolean;
+}) => (
+  <Button size="sm" onClick={onClick} disabled={!isConnected || isPending || isConfirming || disabled}>
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function EventLogViewer() {
   const {isConnected} = useAccount();
 
@@ -24,23 +41,6 @@ export function EventLogViewer() {
   const [wDecimals, setWDecimals] = useState("18");
   const [withdrawAll, setWithdrawAll] = useState(false);
   const withdrawHook = useSwapWithdrawToken();
-
-  const SectionCard = ({title, icon, children}: {title: string; icon: React.ReactNode; children: React.ReactNode}) => (
-    <Card className="bg-card border-border">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-foreground flex items-center gap-2 text-base">{icon}{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-
-  const SubmitButton = ({onClick, isPending, isConfirming, label = "Submit", disabled = false}: {
-    onClick: () => void; isPending: boolean; isConfirming: boolean; label?: string; disabled?: boolean;
-  }) => (
-    <Button size="sm" onClick={onClick} disabled={!isConnected || isPending || isConfirming || disabled}>
-      {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
-    </Button>
-  );
 
   return (
     <div className="space-y-6">
@@ -57,7 +57,7 @@ export function EventLogViewer() {
           </p>
           <div className="flex gap-2">
             <NumericInput placeholder="Amount (tokens)" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} className="bg-background border-border text-sm" />
-            <SubmitButton onClick={() => depositHook.depositMybubu(depositAmount)} isPending={depositHook.isPending} isConfirming={depositHook.isConfirming} disabled={!depositAmount} label="Deposit" />
+            <SubmitButton isConnected={isConnected} onClick={() => depositHook.depositMybubu(depositAmount)} isPending={depositHook.isPending} isConfirming={depositHook.isConfirming} disabled={!depositAmount} label="Deposit" />
           </div>
         </SectionCard>
 
@@ -77,7 +77,7 @@ export function EventLogViewer() {
               <NumericInput placeholder="Decimals" value={wDecimals} onChange={(e) => setWDecimals(e.target.value)} className="bg-background border-border text-sm w-20" />
             </div>
           )}
-          <SubmitButton onClick={() => withdrawHook.withdrawToken(wTokenAddr as `0x${string}`, wTo as `0x${string}`, wAmount, Number(wDecimals), withdrawAll)} isPending={withdrawHook.isPending} isConfirming={withdrawHook.isConfirming} disabled={!isValidAddress(wTokenAddr) || !isValidAddress(wTo) || (!withdrawAll && !wAmount)} label="Withdraw" />
+          <SubmitButton isConnected={isConnected} onClick={() => withdrawHook.withdrawToken(wTokenAddr as `0x${string}`, wTo as `0x${string}`, wAmount, Number(wDecimals), withdrawAll)} isPending={withdrawHook.isPending} isConfirming={withdrawHook.isConfirming} disabled={!isValidAddress(wTokenAddr) || !isValidAddress(wTo) || (!withdrawAll && !wAmount)} label="Withdraw" />
         </SectionCard>
       </div>
     </div>

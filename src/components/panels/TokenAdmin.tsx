@@ -23,6 +23,50 @@ import { parseUnits } from "viem";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
+const SectionCard = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">
+        {icon}
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({
+  onClick,
+  isPending,
+  isConfirming,
+  label = "Submit",
+  disabled = false,
+  isConnected = true,
+}: {
+  onClick: () => void;
+  isPending: boolean;
+  isConfirming: boolean;
+  label?: string;
+  disabled?: boolean;
+  isConnected?: boolean;
+}) => (
+  <Button
+    size="sm"
+    onClick={onClick}
+    disabled={!isConnected || isPending || isConfirming || disabled}
+  >
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function TokenAdmin() {
   const contracts = useChainContracts();
   const { isConnected } = useAccount();
@@ -79,48 +123,6 @@ export function TokenAdmin() {
     { name: "USDT", address: contracts.USDT },
   ];
 
-  const SectionCard = ({
-    title,
-    icon,
-    children,
-  }: {
-    title: string;
-    icon: React.ReactNode;
-    children: React.ReactNode;
-  }) => (
-    <Card className="bg-card border-border">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-foreground flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-
-  const SubmitButton = ({
-    onClick,
-    isPending,
-    isConfirming,
-    label = "Submit",
-    disabled = false,
-  }: {
-    onClick: () => void;
-    isPending: boolean;
-    isConfirming: boolean;
-    label?: string;
-    disabled?: boolean;
-  }) => (
-    <Button
-      size="sm"
-      onClick={onClick}
-      disabled={!isConnected || isPending || isConfirming || disabled}
-    >
-      {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
-    </Button>
-  );
-
   return (
     <div className="space-y-6">
       {/* Connection Status */}
@@ -163,7 +165,7 @@ export function TokenAdmin() {
             <Button variant="outline" size="sm" onClick={addAddressField}>
               <Plus className="h-4 w-4 mr-1" /> Add Address
             </Button>
-            <SubmitButton onClick={handleExcludeFromFee} isPending={excludeFee.isPending} isConfirming={excludeFee.isConfirming} />
+            <SubmitButton isConnected={isConnected} onClick={handleExcludeFromFee} isPending={excludeFee.isPending} isConfirming={excludeFee.isConfirming} />
           </div>
         </SectionCard>
 
@@ -179,7 +181,7 @@ export function TokenAdmin() {
               onChange={(e) => setSellRateInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => sellRateHook.setSellRate(BigInt(sellRate || "0"))}
               isPending={sellRateHook.isPending}
               isConfirming={sellRateHook.isConfirming}
@@ -212,7 +214,7 @@ export function TokenAdmin() {
               onChange={(e) => setWithdrawAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => withdrawEthHook.withdrawEth(withdrawRecipient as `0x${string}`, withdrawAmount)}
               isPending={withdrawEthHook.isPending}
               isConfirming={withdrawEthHook.isConfirming}
@@ -251,7 +253,7 @@ export function TokenAdmin() {
               onChange={(e) => setTokenDecimals(e.target.value)}
               className="bg-background border-border text-sm w-20"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() =>
                 withdrawTokenHook.withdrawalToken(
                   tokenAddr as `0x${string}`,
@@ -279,7 +281,7 @@ export function TokenAdmin() {
               onChange={(e) => setMaxAmountInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => maxAmountHook.setMaxAmount(maxAmount)}
               isPending={maxAmountHook.isPending}
               isConfirming={maxAmountHook.isConfirming}
@@ -302,7 +304,7 @@ export function TokenAdmin() {
               onChange={(e) => setMinAmountInput(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => minAmountHook.setMinAmount(minAmount)}
               isPending={minAmountHook.isPending}
               isConfirming={minAmountHook.isConfirming}
@@ -330,7 +332,7 @@ export function TokenAdmin() {
               onChange={(e) => setTransferLimitPeriod(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() =>
                 transferLimitHook.setTransferLimit(
                   parseUnits(transferLimitAmount || "0", 18),

@@ -19,77 +19,73 @@ import {
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
+const SectionCard = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">
+        {icon}
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({
+  onClick,
+  isPending,
+  isConfirming,
+  label = "Submit",
+  disabled = false,
+  variant = "default" as "default" | "destructive",
+  isConnected = true,
+}: {
+  onClick: () => void;
+  isPending: boolean;
+  isConfirming: boolean;
+  label?: string;
+  disabled?: boolean;
+  variant?: "default" | "destructive";
+  isConnected?: boolean;
+}) => (
+  <Button
+    size="sm"
+    variant={variant}
+    onClick={onClick}
+    disabled={!isConnected || isPending || isConfirming || disabled}
+  >
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function NftNodeAdmin() {
   const contracts = useChainContracts();
   const { isConnected } = useAccount();
 
-  // Mint price
   const [mintPrice, setMintPrice] = useState("");
   const mintPriceHook = useSetMintPriceUSDT();
 
-  // Max supply
   const [maxSupply, setMaxSupply] = useState("");
   const maxSupplyHook = useSetMaxSupply();
 
-  // Distribute dividends
   const [dividendAmount, setDividendAmount] = useState("");
   const dividendHook = useDistributeDividends();
 
-  // Withdraw USDT funds (all)
   const withdrawFundsHook = useWithdrawUSDTFunds();
 
-  // Withdraw USDT to
   const [usdtRecipient, setUsdtRecipient] = useState("");
   const [usdtAmount, setUsdtAmount] = useState("");
   const withdrawToHook = useWithdrawUSDTTo();
 
-  // Emergency withdraw
   const emergencyHook = useEmergencyWithdraw();
-
-  const SectionCard = ({
-    title,
-    icon,
-    children,
-  }: {
-    title: string;
-    icon: React.ReactNode;
-    children: React.ReactNode;
-  }) => (
-    <Card className="bg-card border-border">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-foreground flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-
-  const SubmitButton = ({
-    onClick,
-    isPending,
-    isConfirming,
-    label = "Submit",
-    disabled = false,
-    variant = "default" as "default" | "destructive",
-  }: {
-    onClick: () => void;
-    isPending: boolean;
-    isConfirming: boolean;
-    label?: string;
-    disabled?: boolean;
-    variant?: "default" | "destructive";
-  }) => (
-    <Button
-      size="sm"
-      variant={variant}
-      onClick={onClick}
-      disabled={!isConnected || isPending || isConfirming || disabled}
-    >
-      {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
-    </Button>
-  );
 
   return (
     <div className="space-y-6">
@@ -117,7 +113,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setMintPrice(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => mintPriceHook.setMintPriceUSDT(mintPrice)}
               isPending={mintPriceHook.isPending}
               isConfirming={mintPriceHook.isConfirming}
@@ -140,7 +136,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setMaxSupply(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => maxSupplyHook.setMaxSupply(maxSupply)}
               isPending={maxSupplyHook.isPending}
               isConfirming={maxSupplyHook.isConfirming}
@@ -163,7 +159,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setDividendAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => dividendHook.distributeDividends(dividendAmount)}
               isPending={dividendHook.isPending}
               isConfirming={dividendHook.isConfirming}
@@ -178,7 +174,7 @@ export function NftNodeAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraws ALL USDT balance to treasuryWallet. This is the accumulated USDT from mint payments.
           </p>
-          <SubmitButton
+          <SubmitButton isConnected={isConnected}
             onClick={() => withdrawFundsHook.withdrawUSDTFunds()}
             isPending={withdrawFundsHook.isPending}
             isConfirming={withdrawFundsHook.isConfirming}
@@ -205,7 +201,7 @@ export function NftNodeAdmin() {
               onChange={(e) => setUsdtAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <SubmitButton
+            <SubmitButton isConnected={isConnected}
               onClick={() => withdrawToHook.withdrawUSDTTo(usdtRecipient as `0x${string}`, usdtAmount)}
               isPending={withdrawToHook.isPending}
               isConfirming={withdrawToHook.isConfirming}
@@ -220,7 +216,7 @@ export function NftNodeAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraws BNB ABOVE unclaimed dividends only. Protects user claims — won't drain below what users are owed. Sends to owner.
           </p>
-          <SubmitButton
+          <SubmitButton isConnected={isConnected}
             onClick={() => emergencyHook.emergencyWithdraw()}
             isPending={emergencyHook.isPending}
             isConfirming={emergencyHook.isConfirming}
