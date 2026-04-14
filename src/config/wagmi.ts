@@ -2,7 +2,7 @@ import { http, createConfig } from "wagmi";
 import { bsc, bscTestnet } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
 
-const projectId = "00000000000000000000000000000000"; // TODO: Replace with your WalletConnect project ID
+const projectId = "299d3861cbb9c565794a7c343d2ed767"; // TODO: Replace with your WalletConnect project ID
 
 export const wagmiConfig = createConfig({
   chains: [bsc, bscTestnet],
