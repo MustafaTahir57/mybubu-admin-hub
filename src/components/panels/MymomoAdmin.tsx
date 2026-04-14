@@ -57,7 +57,8 @@ export function MymomoAdmin() {
             Sell tax in basis points (/10000). Default: 1000 (10%). Half burned, half to foundation.
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Basis points (e.g. 1000 = 10%)"
+            <NumericInput
+                  placeholder="Basis points (e.g. 1000 = 10%)"
               value={sellTax}
               onChange={(e) => setSellTax(e.target.value)}
               className="bg-background border-border text-sm"
@@ -82,7 +83,8 @@ export function MymomoAdmin() {
             Buy tax in basis points (/10000). Default: 10000 (100%) — blocks buying. Entire amount burned.
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Basis points (e.g. 10000 = 100%)"
+            <NumericInput
+                  placeholder="Basis points (e.g. 10000 = 100%)"
               value={buyTax}
               onChange={(e) => setBuyTax(e.target.value)}
               className="bg-background border-border text-sm"
@@ -107,7 +109,8 @@ export function MymomoAdmin() {
             Set DEX pair address for tax logic. Also approves max uint256 to PancakeSwap router.
           </p>
           <div className="flex gap-2">
-            <Input              placeholder="Pair address (0x...)"
+            <Input
+                  placeholder="Pair address (0x...)"
               value={swapPair}
               onChange={(e) => setSwapPair(e.target.value)}
               className="bg-background border-border font-mono text-xs"
