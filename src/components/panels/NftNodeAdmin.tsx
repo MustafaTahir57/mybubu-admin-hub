@@ -110,9 +110,7 @@ export function NftNodeAdmin() {
             Change NFT mint price in USDT (18 decimals). Default: 500 USDT. Must be &gt; 0.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="Price in USDT (e.g. 500)"
-              type="number"
+            <NumericInput              placeholder="Price in USDT (e.g. 500)"
               step="1"
               value={mintPrice}
               onChange={(e) => setMintPrice(e.target.value)}
@@ -134,9 +132,7 @@ export function NftNodeAdmin() {
             Change maximum NFT supply. Cannot set below totalMinted. Default: 1000.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="Max supply (e.g. 1000)"
-              type="number"
+            <NumericInput              placeholder="Max supply (e.g. 1000)"
               step="1"
               value={maxSupply}
               onChange={(e) => setMaxSupply(e.target.value)}
@@ -158,9 +154,7 @@ export function NftNodeAdmin() {
             Send BNB with this call. BNB is split equally per minted NFT. Each NFT can later claim its share.
           </p>
           <div className="flex gap-2">
-            <Input
-              placeholder="BNB amount to distribute"
-              type="number"
+            <NumericInput              placeholder="BNB amount to distribute"
               step="0.01"
               value={dividendAmount}
               onChange={(e) => setDividendAmount(e.target.value)}
@@ -194,16 +188,13 @@ export function NftNodeAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraw specific amount of USDT to any address.
           </p>
-          <Input
-            placeholder="Recipient address (0x...)"
+          <Input            placeholder="Recipient address (0x...)"
             value={usdtRecipient}
             onChange={(e) => setUsdtRecipient(e.target.value)}
             className="bg-background border-border font-mono text-xs"
           />
           <div className="flex gap-2">
-            <Input
-              placeholder="Amount in USDT"
-              type="number"
+            <NumericInput              placeholder="Amount in USDT"
               step="1"
               value={usdtAmount}
               onChange={(e) => setUsdtAmount(e.target.value)}
