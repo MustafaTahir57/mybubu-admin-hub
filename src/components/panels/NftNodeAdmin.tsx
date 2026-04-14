@@ -93,7 +93,7 @@ export function NftNodeAdmin() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Badge variant={isConnected ? "default" : "secondary"} className="text-xs">
           {isConnected ? "✓ Wallet Connected" : "⚠ Wallet Not Connected"}
         </Badge>
