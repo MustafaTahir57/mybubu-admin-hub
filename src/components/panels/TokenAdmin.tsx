@@ -16,6 +16,7 @@ import {
   useWithdrawalToken,
   useSetMaxAmount,
   useSetMinAmount,
+  useSetTransferLimit,
 } from "@/hooks/datasenders/useMybubuWrite";
 import { parseUnits } from "viem";
 

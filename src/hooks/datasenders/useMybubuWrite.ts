@@ -102,3 +102,19 @@ export function useSetMinAmount() {
 
   return { setMinAmount, ...rest };
 }
+
+export function useSetTransferLimit() {
+  const { writeContract, contracts, account, ...rest } = useMybubuBaseWrite("Transfer limit updated!");
+
+  const setTransferLimit = (amount: bigint, periodInSeconds: bigint) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    writeContract({
+      address: contracts.MYBUBU_TOKEN,
+      abi: MYBUBU_ABI,
+      functionName: "setTransferLimit",
+      args: [amount, periodInSeconds],
+    } as any);
+  };
+
+  return { setTransferLimit, ...rest };
+}

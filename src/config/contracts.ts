@@ -5058,4 +5058,14 @@ export const MYBUBU_ABI = [
     type: "function",
   },
   { stateMutability: "payable", type: "receive" },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_period", type: "uint256" },
+    ],
+    name: "setTransferLimit",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
