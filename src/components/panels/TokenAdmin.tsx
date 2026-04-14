@@ -145,7 +145,7 @@ export function TokenAdmin() {
           <div className="space-y-2">
             {feeAddresses.map((addr, i) => (
               <div key={i} className="flex gap-2">
-                <Input                  placeholder="0x... wallet address"
+                <Input                  placeholder="0x... wallet address"
                   value={addr}
                   onChange={(e) => updateAddress(i, e.target.value)}
                   className="bg-background border-border font-mono text-xs"
@@ -172,7 +172,7 @@ export function TokenAdmin() {
             Change sell tax rate in basis points (/10000). Default: 500 (5%). E.g. 1000 = 10%.
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Basis points (e.g. 500 = 5%)"
+            <NumericInput              placeholder="Basis points (e.g. 500 = 5%)"
               value={sellRate}
               onChange={(e) => setSellRateInput(e.target.value)}
               className="bg-background border-border text-sm"
@@ -196,13 +196,13 @@ export function TokenAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraw BNB from contract to any address. Requires sufficient balance.
           </p>
-          <Input            placeholder="Recipient address (0x...)"
+          <Input            placeholder="Recipient address (0x...)"
             value={withdrawRecipient}
             onChange={(e) => setWithdrawRecipient(e.target.value)}
             className="bg-background border-border font-mono text-xs"
           />
           <div className="flex gap-2">
-            <NumericInput              placeholder="Amount in BNB"
+            <NumericInput              placeholder="Amount in BNB"
               step="0.01"
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
@@ -222,23 +222,23 @@ export function TokenAdmin() {
           <p className="text-xs text-muted-foreground">
             Withdraw any ERC20 token from contract to any address.
           </p>
-          <Input            placeholder="Token contract address (0x...)"
+          <Input            placeholder="Token contract address (0x...)"
             value={tokenAddr}
             onChange={(e) => setTokenAddr(e.target.value)}
             className="bg-background border-border font-mono text-xs"
           />
-          <Input            placeholder="Receiver address (0x...)"
+          <Input            placeholder="Receiver address (0x...)"
             value={tokenReceiver}
             onChange={(e) => setTokenReceiver(e.target.value)}
             className="bg-background border-border font-mono text-xs"
           />
           <div className="flex gap-2">
-            <NumericInput              placeholder="Amount"
+            <NumericInput              placeholder="Amount"
               value={tokenAmount}
               onChange={(e) => setTokenAmount(e.target.value)}
               className="bg-background border-border text-sm flex-1"
             />
-            <NumericInput              placeholder="Decimals"
+            <NumericInput              placeholder="Decimals"
               value={tokenDecimals}
               onChange={(e) => setTokenDecimals(e.target.value)}
               className="bg-background border-border text-sm w-20"
@@ -264,7 +264,7 @@ export function TokenAdmin() {
             Set maximum BNB deposit per user. Default: 2 BNB.
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Max amount in BNB"
+            <NumericInput              placeholder="Max amount in BNB"
               step="0.1"
               value={maxAmount}
               onChange={(e) => setMaxAmountInput(e.target.value)}
@@ -286,7 +286,7 @@ export function TokenAdmin() {
             Set minimum BNB deposit amount. Default: 0.1 BNB.
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Min amount in BNB"
+            <NumericInput              placeholder="Min amount in BNB"
               step="0.01"
               value={minAmount}
               onChange={(e) => setMinAmountInput(e.target.value)}
@@ -308,12 +308,12 @@ export function TokenAdmin() {
             Set max token transfer amount per time period. Amount in tokens (18 decimals), period in seconds. E.g., 1000 tokens per 86400s (24h).
           </p>
           <div className="flex gap-2">
-            <NumericInput              placeholder="Amount (tokens)"
+            <NumericInput              placeholder="Amount (tokens)"
               value={transferLimitAmount}
               onChange={(e) => setTransferLimitAmount(e.target.value)}
               className="bg-background border-border text-sm"
             />
-            <NumericInput              placeholder="Period (seconds)"
+            <NumericInput              placeholder="Period (seconds)"
               value={transferLimitPeriod}
               onChange={(e) => setTransferLimitPeriod(e.target.value)}
               className="bg-background border-border text-sm"
