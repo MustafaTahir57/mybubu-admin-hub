@@ -1,20 +1,22 @@
-import { useState } from "react";
-import { Wallet, ChevronRight, Menu, X } from "lucide-react";
-import { useAccount, useDisconnect } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { NAV_ITEMS, type PanelId } from "@/pages/Index";
-import { WalletConnectModal } from "@/components/WalletConnectModal";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {useState} from "react";
+import {Wallet, ChevronRight, Menu, X} from "lucide-react";
+import {useAccount, useDisconnect} from "wagmi";
+import {Button} from "@/components/ui/button";
+import {NAV_ITEMS, type PanelId} from "@/pages/Index";
+import {WalletConnectModal} from "@/components/WalletConnectModal";
+import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 
 interface AppSidebarProps {
   activePanel: PanelId;
   onNavigate: (panel: PanelId) => void;
 }
 
-function SidebarContent({ activePanel, onNavigate, onItemClick }: AppSidebarProps & { onItemClick?: () => void }) {
+function SidebarContent({activePanel, onNavigate, onItemClick}: AppSidebarProps & {onItemClick?: () => void}) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
+  const {address, isConnected, chainId} = useAccount();
+  const {disconnect} = useDisconnect();
+
+  console.log("chainId", chainId)
 
   const truncatedAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -41,11 +43,10 @@ function SidebarContent({ activePanel, onNavigate, onItemClick }: AppSidebarProp
                 onNavigate(item.id);
                 onItemClick?.();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${isActive
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
             >
               <item.icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
@@ -88,7 +89,7 @@ function SidebarContent({ activePanel, onNavigate, onItemClick }: AppSidebarProp
   );
 }
 
-export function AppSidebar({ activePanel, onNavigate }: AppSidebarProps) {
+export function AppSidebar({activePanel, onNavigate}: AppSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
