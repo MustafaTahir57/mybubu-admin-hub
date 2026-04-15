@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Wallet, Banknote, DollarSign, Users, Image, Gift, Coins, Layers, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/StatCard";
-import { useUserLookup } from "@/hooks/useContractData";
-import { Coins, Layers, DollarSign, Users, Image, Gift } from "lucide-react";
+import { CopyAddress } from "@/components/CopyAddress";
+import { useUserLookup, useChainContracts } from "@/hooks/useContractData";
+import { useAccount } from "wagmi";
+import {
+  useWithdrawUSDTPresale,
+  useWithdrawBNBPresale,
+  useWithdrawAllPresale,
+} from "@/hooks/datasenders/usePresaleWrite";
 
 function formatNumber(value: string): string {
   const num = parseFloat(value);
@@ -14,11 +22,64 @@ function formatNumber(value: string): string {
   return num.toFixed(4);
 }
 
+const SectionCard = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Card className="bg-card border-border">
+    <CardHeader className="pb-4">
+      <CardTitle className="text-foreground flex items-center gap-2 text-base">
+        {icon}
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">{children}</CardContent>
+  </Card>
+);
+
+const SubmitButton = ({
+  onClick,
+  isPending,
+  isConfirming,
+  label = "Submit",
+  disabled = false,
+  variant = "default" as "default" | "destructive",
+  isConnected,
+}: {
+  onClick: () => void;
+  isPending: boolean;
+  isConfirming: boolean;
+  label?: string;
+  disabled?: boolean;
+  variant?: "default" | "destructive";
+  isConnected: boolean;
+}) => (
+  <Button
+    size="sm"
+    variant={variant}
+    onClick={onClick}
+    disabled={!isConnected || isPending || isConfirming || disabled}
+  >
+    {isPending ? "Confirming…" : isConfirming ? "Waiting…" : label}
+  </Button>
+);
+
 export function UserLookup() {
   const [input, setInput] = useState("");
   const [lookupAddress, setLookupAddress] = useState<`0x${string}` | undefined>();
+  const { isConnected } = useAccount();
+  const contracts = useChainContracts();
 
   const data = useUserLookup(lookupAddress);
+
+  const withdrawUSDTHook = useWithdrawUSDTPresale();
+  const withdrawBNBHook = useWithdrawBNBPresale();
+  const withdrawAllHook = useWithdrawAllPresale();
 
   const handleSearch = () => {
     if (input.match(/^0x[a-fA-F0-9]{40}$/)) {
@@ -28,6 +89,18 @@ export function UserLookup() {
 
   return (
     <div className="space-y-6">
+      {/* Connection & Contract Info */}
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge variant={isConnected ? "default" : "secondary"} className="text-xs">
+          {isConnected ? "✓ Wallet Connected" : "⚠ Wallet Not Connected"}
+        </Badge>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span>Presale:</span>
+          <CopyAddress address={contracts.MYBOO_PRESALE} truncate />
+        </div>
+      </div>
+
+      {/* User Lookup Section */}
       <div className="flex gap-3 max-w-xl">
         <Input
           placeholder="Enter wallet address (0x...)"
@@ -87,10 +160,57 @@ export function UserLookup() {
       )}
 
       {!lookupAddress && (
-        <div className="flex items-center justify-center h-64 text-muted-foreground">
+        <div className="flex items-center justify-center h-32 text-muted-foreground">
           <p className="text-sm">Enter a wallet address to view on-chain data</p>
         </div>
       )}
+
+      {/* Presale Admin: Withdraw Functions */}
+      <h3 className="text-lg font-semibold text-foreground pt-4 border-t border-border">
+        Presale Withdraw Functions
+      </h3>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <SectionCard title="Withdraw USDT" icon={<DollarSign className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Withdraw all accumulated USDT from the presale contract to the owner.
+          </p>
+          <SubmitButton
+            onClick={() => withdrawUSDTHook.withdrawUSDT()}
+            isPending={withdrawUSDTHook.isPending}
+            isConfirming={withdrawUSDTHook.isConfirming}
+            label="Withdraw USDT"
+            isConnected={isConnected}
+          />
+        </SectionCard>
+
+        <SectionCard title="Withdraw BNB" icon={<Banknote className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Withdraw all accumulated BNB from the presale contract to the owner.
+          </p>
+          <SubmitButton
+            onClick={() => withdrawBNBHook.withdrawBNB()}
+            isPending={withdrawBNBHook.isPending}
+            isConfirming={withdrawBNBHook.isConfirming}
+            label="Withdraw BNB"
+            isConnected={isConnected}
+          />
+        </SectionCard>
+
+        <SectionCard title="Withdraw All" icon={<AlertTriangle className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Withdraw both USDT and BNB from the presale contract to the owner in one transaction.
+          </p>
+          <SubmitButton
+            onClick={() => withdrawAllHook.withdrawAll()}
+            isPending={withdrawAllHook.isPending}
+            isConfirming={withdrawAllHook.isConfirming}
+            label="Withdraw All"
+            variant="destructive"
+            isConnected={isConnected}
+          />
+        </SectionCard>
+      </div>
     </div>
   );
 }
