@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Search, Wallet, Banknote, DollarSign, Users, Image, Gift, Coins, Layers, AlertTriangle } from "lucide-react";
+import { Search, Wallet, Banknote, DollarSign, Users, Image, Gift, Coins, Layers, AlertTriangle, Tag } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ import {
   useWithdrawUSDTPresale,
   useWithdrawBNBPresale,
   useWithdrawAllPresale,
+  useSetTokenPrice,
 } from "@/hooks/datasenders/usePresaleWrite";
 
 function formatNumber(value: string): string {
@@ -80,6 +82,8 @@ export function UserLookup() {
   const withdrawUSDTHook = useWithdrawUSDTPresale();
   const withdrawBNBHook = useWithdrawBNBPresale();
   const withdrawAllHook = useWithdrawAllPresale();
+  const setTokenPriceHook = useSetTokenPrice();
+  const [newPrice, setNewPrice] = useState("");
 
   const handleSearch = () => {
     if (input.match(/^0x[a-fA-F0-9]{40}$/)) {
@@ -207,6 +211,26 @@ export function UserLookup() {
             isConfirming={withdrawAllHook.isConfirming}
             label="Withdraw All"
             variant="destructive"
+            isConnected={isConnected}
+          />
+        </SectionCard>
+
+        <SectionCard title="Set Token Price" icon={<Tag className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Update the MyBoo presale price (in USD). Example: 0.0001
+          </p>
+          <NumericInput
+            placeholder="New price in USD"
+            value={newPrice}
+            onChange={(e) => setNewPrice(e.target.value)}
+            className="bg-card border-border"
+          />
+          <SubmitButton
+            onClick={() => setTokenPriceHook.setTokenPrice(newPrice)}
+            isPending={setTokenPriceHook.isPending}
+            isConfirming={setTokenPriceHook.isConfirming}
+            label="Update Price"
+            disabled={!newPrice}
             isConnected={isConnected}
           />
         </SectionCard>
