@@ -2,6 +2,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useAccount, useChainId 
 import { MYBOO_PRESALE_ABI, getContracts } from "@/config/contracts";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { parseUnits } from "viem";
 
 function usePresaleBaseWrite(successMessage: string) {
   const chainId = useChainId();
@@ -65,4 +66,31 @@ export function useWithdrawAllPresale() {
   };
 
   return { withdrawAll, ...rest };
+}
+
+export function useSetTokenPrice() {
+  const { writeContract, contracts, account, ...rest } = usePresaleBaseWrite("Token price updated!");
+
+  // newPriceUSD is expected in USD (human readable). The contract stores it as
+  // an 18-decimal fixed point value (matching USDT/MYBOO scaling on BSC).
+  const setTokenPrice = (newPriceUSD: string) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    if (!newPriceUSD || isNaN(Number(newPriceUSD)) || Number(newPriceUSD) <= 0) {
+      toast.error("Enter a valid price");
+      return;
+    }
+    try {
+      const priceWei = parseUnits(newPriceUSD, 18);
+      writeContract({
+        address: contracts.MYBOO_PRESALE,
+        abi: MYBOO_PRESALE_ABI,
+        functionName: "setTokenPrice",
+        args: [priceWei],
+      } as any);
+    } catch (e: any) {
+      toast.error(e?.message?.slice(0, 100) || "Invalid price");
+    }
+  };
+
+  return { setTokenPrice, ...rest };
 }
