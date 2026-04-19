@@ -74,6 +74,15 @@ export function AnalyticsDashboard() {
   });
   const rewardPoolFormatted = rewardPool.data ? formatUnits(rewardPool.data as bigint, 18) : "0";
 
+  // Total MYBUBU staked (from MYMOMO contract)
+  const stakingStats = useReadContract({
+    address: contracts.MYMOMO_TOKEN,
+    abi: MYMOMO_ABI,
+    functionName: "getStakingStats",
+  });
+  const stakingData = stakingStats.data as [bigint, bigint, bigint, `0x${string}`] | undefined;
+  const totalMybubuStaked = stakingData ? formatUnits(stakingData[0], 18) : "0";
+
   // Contract BNB balances
   const mybubuBal = useBalance({ address: contracts.MYBUBU_TOKEN });
   const swapBal = useBalance({ address: contracts.SWAP });
