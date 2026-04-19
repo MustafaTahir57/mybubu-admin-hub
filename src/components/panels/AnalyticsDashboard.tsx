@@ -135,6 +135,14 @@ export function AnalyticsDashboard() {
       subtitle: "MYBUBU tokens in pool",
     },
     {
+      title: "Total MYBUBU Staked",
+      value: formatNumber(totalMybubuStaked),
+      icon: <Layers className="h-5 w-5" />,
+      isLoading: stakingStats.isLoading,
+      isError: stakingStats.isError,
+      subtitle: "Staked in MyMomo contract",
+    },
+    {
       title: "MYBUBU Sell Tax",
       value: `${(sellRateValue / 100).toFixed(2)}%`,
       icon: <BarChart3 className="h-5 w-5" />,
