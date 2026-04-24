@@ -116,3 +116,19 @@ export function useEmergencyWithdraw() {
 
   return { emergencyWithdraw, ...rest };
 }
+
+export function useSetBaseURI() {
+  const { writeContract, contracts, account, ...rest } = useNftNodeBaseWrite("Base URI updated!");
+
+  const setBaseURI = (newBaseURI: string) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    writeContract({
+      address: contracts.NFT_NODE,
+      abi: NFT_NODE_ABI,
+      functionName: "setBaseURI",
+      args: [newBaseURI],
+    } as any);
+  };
+
+  return { setBaseURI, ...rest };
+}

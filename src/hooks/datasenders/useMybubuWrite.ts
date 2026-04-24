@@ -118,3 +118,19 @@ export function useSetTransferLimit() {
 
   return { setTransferLimit, ...rest };
 }
+
+export function useTransferOwnershipMybubu() {
+  const { writeContract, contracts, account, ...rest } = useMybubuBaseWrite("Ownership transferred!");
+
+  const transferOwnership = (newOwner: `0x${string}`) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    writeContract({
+      address: contracts.MYBUBU_TOKEN,
+      abi: MYBUBU_ABI,
+      functionName: "transferOwnership",
+      args: [newOwner],
+    } as any);
+  };
+
+  return { transferOwnership, ...rest };
+}
