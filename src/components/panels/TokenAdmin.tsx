@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
-import { Plus, X, Percent, ArrowDownToLine, ArrowUpFromLine, Coins, Send, Timer } from "lucide-react";
+import { Plus, X, Percent, ArrowDownToLine, ArrowUpFromLine, Coins, Send, Timer, UserCog } from "lucide-react";
 import { useAccount } from "wagmi";
 import { useExcludeFromFeeBatch } from "@/hooks/datasenders/useExcludeFromFeeBatch";
 import {
@@ -18,6 +18,7 @@ import {
   useSetMaxAmount,
   useSetMinAmount,
   useSetTransferLimit,
+  useTransferOwnershipMybubu,
 } from "@/hooks/datasenders/useMybubuWrite";
 import { parseUnits } from "viem";
 
@@ -102,6 +103,10 @@ export function TokenAdmin() {
   const [transferLimitAmount, setTransferLimitAmount] = useState("");
   const [transferLimitPeriod, setTransferLimitPeriod] = useState("");
   const transferLimitHook = useSetTransferLimit();
+
+  // Transfer Ownership
+  const [newOwner, setNewOwner] = useState("");
+  const transferOwnershipHook = useTransferOwnershipMybubu();
 
   const addAddressField = () => setFeeAddresses((prev) => [...prev, ""]);
   const removeAddressField = (i: number) => setFeeAddresses((prev) => prev.filter((_, idx) => idx !== i));
@@ -350,6 +355,27 @@ export function TokenAdmin() {
               = {(Number(transferLimitPeriod) / 3600).toFixed(1)} hours
             </p>
           )}
+        </SectionCard>
+
+        {/* Transfer Ownership */}
+        <SectionCard title="Transfer Ownership" icon={<UserCog className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Transfer contract ownership to a new address. This action is irreversible — the new owner gains full admin control.
+          </p>
+          <Input
+            placeholder="New owner address (0x...)"
+            value={newOwner}
+            onChange={(e) => setNewOwner(e.target.value)}
+            className="bg-background border-border font-mono text-xs"
+          />
+          <SubmitButton
+            isConnected={isConnected}
+            onClick={() => transferOwnershipHook.transferOwnership(newOwner as `0x${string}`)}
+            isPending={transferOwnershipHook.isPending}
+            isConfirming={transferOwnershipHook.isConfirming}
+            disabled={!isValidAddress(newOwner)}
+            label="Transfer Ownership"
+          />
         </SectionCard>
       </div>
 

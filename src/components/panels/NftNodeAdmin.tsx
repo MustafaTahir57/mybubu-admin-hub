@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
-import { DollarSign, Hash, Banknote, Wallet, Send, AlertTriangle } from "lucide-react";
+import { DollarSign, Hash, Banknote, Wallet, Send, AlertTriangle, Link2 } from "lucide-react";
 import { useAccount } from "wagmi";
 import {
   useSetMintPriceUSDT,
@@ -15,6 +15,7 @@ import {
   useWithdrawUSDTFunds,
   useWithdrawUSDTTo,
   useEmergencyWithdraw,
+  useSetBaseURI,
 } from "@/hooks/datasenders/useNftNodeWrite";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
@@ -86,6 +87,9 @@ export function NftNodeAdmin() {
   const withdrawToHook = useWithdrawUSDTTo();
 
   const emergencyHook = useEmergencyWithdraw();
+
+  const [baseURI, setBaseURIInput] = useState("");
+  const baseURIHook = useSetBaseURI();
 
   return (
     <div className="space-y-6">
@@ -223,6 +227,29 @@ export function NftNodeAdmin() {
             label="Emergency Withdraw"
             variant="destructive"
           />
+        </SectionCard>
+
+        {/* Set Base URI */}
+        <SectionCard title="Set Base URI" icon={<Link2 className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Update the metadata base URI for all NFTs. Typically an IPFS or HTTPS folder ending with "/". E.g. ipfs://CID/ or https://api.example.com/metadata/
+          </p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="https://... or ipfs://CID/"
+              value={baseURI}
+              onChange={(e) => setBaseURIInput(e.target.value)}
+              className="bg-background border-border text-xs"
+            />
+            <SubmitButton
+              isConnected={isConnected}
+              onClick={() => baseURIHook.setBaseURI(baseURI)}
+              isPending={baseURIHook.isPending}
+              isConfirming={baseURIHook.isConfirming}
+              disabled={!baseURI.trim()}
+              label="Set URI"
+            />
+          </div>
         </SectionCard>
       </div>
     </div>
