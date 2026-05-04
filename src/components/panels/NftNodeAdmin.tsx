@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
-import { DollarSign, Hash, Banknote, Wallet, Send, AlertTriangle, Link2 } from "lucide-react";
+import { DollarSign, Hash, Banknote, Wallet, Send, AlertTriangle, Link2, UserCog } from "lucide-react";
 import { useAccount } from "wagmi";
 import {
   useSetMintPriceUSDT,
@@ -16,6 +16,7 @@ import {
   useWithdrawUSDTTo,
   useEmergencyWithdraw,
   useSetBaseURI,
+  useTransferOwnershipNftNode,
 } from "@/hooks/datasenders/useNftNodeWrite";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
@@ -90,6 +91,9 @@ export function NftNodeAdmin() {
 
   const [baseURI, setBaseURIInput] = useState("");
   const baseURIHook = useSetBaseURI();
+
+  const [newOwner, setNewOwner] = useState("");
+  const transferOwnershipHook = useTransferOwnershipNftNode();
 
   return (
     <div className="space-y-6">
@@ -250,6 +254,27 @@ export function NftNodeAdmin() {
               label="Set URI"
             />
           </div>
+        </SectionCard>
+
+        {/* Transfer Ownership */}
+        <SectionCard title="Transfer Ownership" icon={<UserCog className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Transfer contract ownership to a new address. This action is irreversible — the new owner gains full admin control.
+          </p>
+          <Input
+            placeholder="New owner address (0x...)"
+            value={newOwner}
+            onChange={(e) => setNewOwner(e.target.value)}
+            className="bg-background border-border font-mono text-xs"
+          />
+          <SubmitButton
+            isConnected={isConnected}
+            onClick={() => transferOwnershipHook.transferOwnership(newOwner as `0x${string}`)}
+            isPending={transferOwnershipHook.isPending}
+            isConfirming={transferOwnershipHook.isConfirming}
+            disabled={!isValidAddress(newOwner)}
+            label="Transfer Ownership"
+          />
         </SectionCard>
       </div>
     </div>
