@@ -41,3 +41,14 @@ export function useSwapWithdrawToken() {
     },
   };
 }
+
+export function useTransferOwnershipSwap() {
+  const { writeContract, contracts, account, ...rest } = useSwapBaseWrite("Ownership transferred!");
+  return {
+    ...rest,
+    transferOwnership: (newOwner: `0x${string}`) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      writeContract({ address: contracts.SWAP, abi: SWAP_ABI, functionName: "transferOwnership", args: [newOwner] } as any);
+    },
+  };
+}
