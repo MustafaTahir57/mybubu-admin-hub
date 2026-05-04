@@ -48,3 +48,14 @@ export function useSetSwapPair() {
     },
   };
 }
+
+export function useTransferOwnershipMymomo() {
+  const { writeContract, contracts, account, ...rest } = useMymomoBaseWrite("Ownership transferred!");
+  return {
+    ...rest,
+    transferOwnership: (newOwner: `0x${string}`) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "transferOwnership", args: [newOwner] } as any);
+    },
+  };
+}

@@ -132,3 +132,19 @@ export function useSetBaseURI() {
 
   return { setBaseURI, ...rest };
 }
+
+export function useTransferOwnershipNftNode() {
+  const { writeContract, contracts, account, ...rest } = useNftNodeBaseWrite("Ownership transferred!");
+
+  const transferOwnership = (newOwner: `0x${string}`) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    writeContract({
+      address: contracts.NFT_NODE,
+      abi: NFT_NODE_ABI,
+      functionName: "transferOwnership",
+      args: [newOwner],
+    } as any);
+  };
+
+  return { transferOwnership, ...rest };
+}

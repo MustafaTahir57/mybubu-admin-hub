@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { useAccount } from "wagmi";
-import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair } from "@/hooks/datasenders/useMymomoWrite";
-import { Percent, ShoppingCart, ArrowLeftRight } from "lucide-react";
+import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair, useTransferOwnershipMymomo } from "@/hooks/datasenders/useMymomoWrite";
+import { Percent, ShoppingCart, ArrowLeftRight, UserCog } from "lucide-react";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
@@ -41,6 +41,9 @@ export function MymomoAdmin() {
 
   const [swapPair, setSwapPair] = useState("");
   const swapPairHook = useSetSwapPair();
+
+  const [newOwner, setNewOwner] = useState("");
+  const transferOwnershipHook = useTransferOwnershipMymomo();
 
   return (
     <div className="space-y-6">
@@ -123,6 +126,27 @@ export function MymomoAdmin() {
               label="Set Pair"
             />
           </div>
+        </SectionCard>
+
+        {/* Transfer Ownership */}
+        <SectionCard title="Transfer Ownership" icon={<UserCog className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Transfer contract ownership to a new address. This action is irreversible — the new owner gains full admin control.
+          </p>
+          <Input
+            placeholder="New owner address (0x...)"
+            value={newOwner}
+            onChange={(e) => setNewOwner(e.target.value)}
+            className="bg-background border-border font-mono text-xs"
+          />
+          <SubmitButton
+            isConnected={isConnected}
+            onClick={() => transferOwnershipHook.transferOwnership(newOwner as `0x${string}`)}
+            isPending={transferOwnershipHook.isPending}
+            isConfirming={transferOwnershipHook.isConfirming}
+            disabled={!isValidAddress(newOwner)}
+            label="Transfer Ownership"
+          />
         </SectionCard>
       </div>
     </div>

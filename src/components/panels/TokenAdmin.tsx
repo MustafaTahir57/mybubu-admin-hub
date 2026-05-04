@@ -20,6 +20,7 @@ import {
   useSetTransferLimit,
   useTransferOwnershipMybubu,
 } from "@/hooks/datasenders/useMybubuWrite";
+import { useTransferOwnershipSwap } from "@/hooks/datasenders/useSwapWrite";
 import { parseUnits } from "viem";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
@@ -107,6 +108,10 @@ export function TokenAdmin() {
   // Transfer Ownership
   const [newOwner, setNewOwner] = useState("");
   const transferOwnershipHook = useTransferOwnershipMybubu();
+
+  // Transfer Swap Ownership
+  const [newSwapOwner, setNewSwapOwner] = useState("");
+  const transferSwapOwnershipHook = useTransferOwnershipSwap();
 
   const addAddressField = () => setFeeAddresses((prev) => [...prev, ""]);
   const removeAddressField = (i: number) => setFeeAddresses((prev) => prev.filter((_, idx) => idx !== i));
@@ -375,6 +380,27 @@ export function TokenAdmin() {
             isConfirming={transferOwnershipHook.isConfirming}
             disabled={!isValidAddress(newOwner)}
             label="Transfer Ownership"
+          />
+        </SectionCard>
+
+        {/* Transfer Swap Ownership */}
+        <SectionCard title="Transfer Swap Ownership" icon={<UserCog className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Transfer Swap contract ownership to a new address. This action is irreversible — the new owner gains full admin control of the Swap contract.
+          </p>
+          <Input
+            placeholder="New owner address (0x...)"
+            value={newSwapOwner}
+            onChange={(e) => setNewSwapOwner(e.target.value)}
+            className="bg-background border-border font-mono text-xs"
+          />
+          <SubmitButton
+            isConnected={isConnected}
+            onClick={() => transferSwapOwnershipHook.transferOwnership(newSwapOwner as `0x${string}`)}
+            isPending={transferSwapOwnershipHook.isPending}
+            isConfirming={transferSwapOwnershipHook.isConfirming}
+            disabled={!isValidAddress(newSwapOwner)}
+            label="Transfer Swap Ownership"
           />
         </SectionCard>
       </div>
