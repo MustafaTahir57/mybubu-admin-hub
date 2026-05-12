@@ -154,7 +154,7 @@ export function MymomoAdmin() {
         {/* Set Daily Reward Rate */}
         <SectionCard title="Set Daily Reward Rate" icon={<TrendingUp className="h-4 w-4 text-primary" />}>
           <p className="text-xs text-muted-foreground">
-            Enter the rate as a decimal (e.g. 0.001 or 0.1). It will be multiplied by 1000 before sending to the contract.
+            Enter the percentage.
           </p>
           <div className="flex gap-2">
             <NumericInput
