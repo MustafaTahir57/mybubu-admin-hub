@@ -1,11 +1,11 @@
-import { Coins, Users, Image, DollarSign, Layers, TrendingUp, Wallet, BarChart3 } from "lucide-react";
-import { StatCard } from "@/components/StatCard";
-import { useDashboardStats, useChainContracts } from "@/hooks/useContractData";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { useReadContract, useBalance } from "wagmi";
-import { formatUnits } from "viem";
-import { MYBOO_PRESALE_ABI, NFT_NODE_ABI, MYBUBU_ABI, MYMOMO_ABI } from "@/config/contracts";
+import {Coins, Users, Image, DollarSign, Layers, TrendingUp, Wallet, BarChart3} from "lucide-react";
+import {StatCard} from "@/components/StatCard";
+import {useDashboardStats, useChainContracts} from "@/hooks/useContractData";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell} from "recharts";
+import {useReadContract, useBalance} from "wagmi";
+import {formatUnits} from "viem";
+import {MYBOO_PRESALE_ABI, NFT_NODE_ABI, MYBUBU_ABI, MYMOMO_ABI} from "@/config/contracts";
 
 function formatNumber(value: string): string {
   const num = parseFloat(value);
@@ -24,7 +24,7 @@ function formatUsd(value: string): string {
 
 export function AnalyticsDashboard() {
   const contracts = useChainContracts();
-  const { mybooSupply, mybubuSupply, nftSupply, isLoading } = useDashboardStats();
+  const {mybooSupply, mybubuSupply, nftSupply, isLoading} = useDashboardStats();
 
   // Presale info
   const presaleInfo = useReadContract({
@@ -80,12 +80,12 @@ export function AnalyticsDashboard() {
     abi: MYMOMO_ABI,
     functionName: "getStakingStats",
   });
-  const stakingData = stakingStats.data as [bigint, bigint, bigint, `0x${string}`] | undefined;
+  const stakingData = stakingStats.data as [bigint, bigint, bigint, `0x${string}`, bigint, bigint] | undefined;
   const totalMybubuStaked = stakingData ? formatUnits(stakingData[0], 18) : "0";
 
   // Contract BNB balances
-  const mybubuBal = useBalance({ address: contracts.MYBUBU_TOKEN });
-  const swapBal = useBalance({ address: contracts.SWAP });
+  const mybubuBal = useBalance({address: contracts.MYBUBU_TOKEN});
+  const swapBal = useBalance({address: contracts.SWAP});
 
   const stats = [
     {
@@ -168,9 +168,9 @@ export function AnalyticsDashboard() {
 
   // Chart: presale breakdown
   const chartData = [
-    { name: "USDT Raised", value: parseFloat(totalRaisedUSDT), color: "hsl(45, 100%, 55%)" },
-    { name: "BNB Raised (USD)", value: parseFloat(totalRaisedBNB) * parseFloat(bnbPriceUSD), color: "hsl(270, 80%, 60%)" },
-    { name: "NFT USDT", value: parseFloat(totalUSDTCollected), color: "hsl(160, 70%, 50%)" },
+    {name: "USDT Raised", value: parseFloat(totalRaisedUSDT), color: "hsl(45, 100%, 55%)"},
+    {name: "BNB Raised (USD)", value: parseFloat(totalRaisedBNB) * parseFloat(bnbPriceUSD), color: "hsl(270, 80%, 60%)"},
+    {name: "NFT USDT", value: parseFloat(totalUSDTCollected), color: "hsl(160, 70%, 50%)"},
   ];
 
   return (
