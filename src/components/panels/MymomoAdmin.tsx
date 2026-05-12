@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { useAccount } from "wagmi";
-import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair, useTransferOwnershipMymomo } from "@/hooks/datasenders/useMymomoWrite";
-import { Percent, ShoppingCart, ArrowLeftRight, UserCog } from "lucide-react";
+import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair, useTransferOwnershipMymomo, useSetDailyRewardRate } from "@/hooks/datasenders/useMymomoWrite";
+import { Percent, ShoppingCart, ArrowLeftRight, UserCog, TrendingUp } from "lucide-react";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 
@@ -44,6 +44,9 @@ export function MymomoAdmin() {
 
   const [newOwner, setNewOwner] = useState("");
   const transferOwnershipHook = useTransferOwnershipMymomo();
+
+  const [dailyRate, setDailyRate] = useState("");
+  const dailyRateHook = useSetDailyRewardRate();
 
   return (
     <div className="space-y-6">
@@ -147,6 +150,31 @@ export function MymomoAdmin() {
             disabled={!isValidAddress(newOwner)}
             label="Transfer Ownership"
           />
+        </SectionCard>
+        {/* Set Daily Reward Rate */}
+        <SectionCard title="Set Daily Reward Rate" icon={<TrendingUp className="h-4 w-4 text-primary" />}>
+          <p className="text-xs text-muted-foreground">
+            Enter the rate as a decimal (e.g. 0.001 or 0.1). It will be multiplied by 1000 before sending to the contract.
+          </p>
+          <div className="flex gap-2">
+            <NumericInput
+                  placeholder="Rate (e.g. 0.001)"
+              value={dailyRate}
+              onChange={(e) => setDailyRate(e.target.value)}
+              className="bg-background border-border text-sm"
+            />
+            <SubmitButton isConnected={isConnected}
+              onClick={() => dailyRateHook.setDailyRewardRate(Number(dailyRate || "0"))}
+              isPending={dailyRateHook.isPending}
+              isConfirming={dailyRateHook.isConfirming}
+              disabled={!dailyRate || isNaN(Number(dailyRate))}
+            />
+          </div>
+          {dailyRate && !isNaN(Number(dailyRate)) && (
+            <p className="text-xs text-accent-foreground">
+              = {Math.round(Number(dailyRate) * 1000)} (scaled ×1000)
+            </p>
+          )}
         </SectionCard>
       </div>
     </div>
