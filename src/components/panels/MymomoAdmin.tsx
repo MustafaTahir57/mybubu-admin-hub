@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { useAccount } from "wagmi";
-import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair, useTransferOwnershipMymomo } from "@/hooks/datasenders/useMymomoWrite";
-import { Percent, ShoppingCart, ArrowLeftRight, UserCog } from "lucide-react";
+import { useSetSellTaxPercent, useSetBuyTaxPercent, useSetSwapPair, useTransferOwnershipMymomo, useSetDailyRewardRate } from "@/hooks/datasenders/useMymomoWrite";
+import { Percent, ShoppingCart, ArrowLeftRight, UserCog, TrendingUp } from "lucide-react";
 
 const isValidAddress = (a: string) => /^0x[a-fA-F0-9]{40}$/.test(a);
 

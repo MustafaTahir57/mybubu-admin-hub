@@ -59,3 +59,15 @@ export function useTransferOwnershipMymomo() {
     },
   };
 }
+
+export function useSetDailyRewardRate() {
+  const { writeContract, contracts, account, ...rest } = useMymomoBaseWrite("Daily reward rate updated!");
+  return {
+    ...rest,
+    setDailyRewardRate: (rate: number) => {
+      if (!account) { toast.error("Connect wallet first"); return; }
+      const scaled = BigInt(Math.round(rate * 1000));
+      writeContract({ address: contracts.MYMOMO_TOKEN, abi: MYMOMO_ABI, functionName: "setDailyRewardRate", args: [scaled] } as any);
+    },
+  };
+}
