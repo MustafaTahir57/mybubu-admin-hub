@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { CopyAddress } from "@/components/CopyAddress";
 import { useChainContracts } from "@/hooks/useContractData";
 import { Plus, X, Percent, ArrowDownToLine, ArrowUpFromLine, Coins, Send, Timer, UserCog } from "lucide-react";
+import { Ban } from "lucide-react";
 import { useAccount } from "wagmi";
 import { useExcludeFromFeeBatch } from "@/hooks/datasenders/useExcludeFromFeeBatch";
 import {
