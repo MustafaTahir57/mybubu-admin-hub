@@ -110,6 +110,11 @@ export function TokenAdmin() {
   const [newOwner, setNewOwner] = useState("");
   const transferOwnershipHook = useTransferOwnershipMybubu();
 
+  // Blacklist batch
+  const [blacklistAddresses, setBlacklistAddresses] = useState<string[]>([""]);
+  const [blacklisted, setBlacklisted] = useState(true);
+  const blacklistHook = useBlacklistBatch();
+
   const addAddressField = () => setFeeAddresses((prev) => [...prev, ""]);
   const removeAddressField = (i: number) => setFeeAddresses((prev) => prev.filter((_, idx) => idx !== i));
   const updateAddress = (i: number, v: string) => setFeeAddresses((prev) => prev.map((a, idx) => (idx === i ? v : a)));
@@ -118,6 +123,16 @@ export function TokenAdmin() {
     const valid = feeAddresses.map((a) => a.trim()).filter(isValidAddress) as `0x${string}`[];
     if (valid.length === 0) return;
     excludeFee.excludeFromFeeBatch(valid, excluded);
+  };
+
+  const addBlacklistField = () => setBlacklistAddresses((prev) => [...prev, ""]);
+  const removeBlacklistField = (i: number) => setBlacklistAddresses((prev) => prev.filter((_, idx) => idx !== i));
+  const updateBlacklistAddress = (i: number, v: string) => setBlacklistAddresses((prev) => prev.map((a, idx) => (idx === i ? v : a)));
+
+  const handleBlacklistBatch = () => {
+    const valid = blacklistAddresses.map((a) => a.trim()).filter(isValidAddress) as `0x${string}`[];
+    if (valid.length === 0) return;
+    blacklistHook.blacklistBatch(valid, blacklisted);
   };
 
   const contractList = [
