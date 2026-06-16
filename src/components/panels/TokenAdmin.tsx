@@ -19,6 +19,7 @@ import {
   useSetMinAmount,
   useSetTransferLimit,
   useTransferOwnershipMybubu,
+  useBlacklistBatch,
 } from "@/hooks/datasenders/useMybubuWrite";
 import { parseUnits } from "viem";
 
