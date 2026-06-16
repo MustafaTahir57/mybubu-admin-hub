@@ -394,6 +394,42 @@ export function TokenAdmin() {
             label="Transfer Ownership"
           />
         </SectionCard>
+
+        {/* Blacklist Batch */}
+        <SectionCard title="Blacklist (Batch)" icon={<Ban className="h-4 w-4 text-destructive" />}>
+          <p className="text-xs text-muted-foreground">
+            Batch add/remove addresses from the blacklist. Blacklisted addresses cannot transfer tokens.
+          </p>
+          <div className="flex items-center gap-3">
+            <Switch id="blacklist-toggle" checked={blacklisted} onCheckedChange={setBlacklisted} />
+            <Label htmlFor="blacklist-toggle" className="text-sm text-foreground">
+              {blacklisted ? "Blacklist (block)" : "Un-blacklist (allow)"}
+            </Label>
+          </div>
+          <div className="space-y-2">
+            {blacklistAddresses.map((addr, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  placeholder="0x... wallet address"
+                  value={addr}
+                  onChange={(e) => updateBlacklistAddress(i, e.target.value)}
+                  className="bg-background border-border font-mono text-xs"
+                />
+                {blacklistAddresses.length > 1 && (
+                  <Button variant="ghost" size="icon" onClick={() => removeBlacklistField(i)} className="shrink-0 text-muted-foreground hover:text-destructive">
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" size="sm" onClick={addBlacklistField}>
+              <Plus className="h-4 w-4 mr-1" /> Add Address
+            </Button>
+            <SubmitButton isConnected={isConnected} onClick={handleBlacklistBatch} isPending={blacklistHook.isPending} isConfirming={blacklistHook.isConfirming} label="Update Blacklist" />
+          </div>
+        </SectionCard>
       </div>
 
       {/* Contract Addresses */}
