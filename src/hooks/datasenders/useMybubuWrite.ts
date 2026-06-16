@@ -134,3 +134,19 @@ export function useTransferOwnershipMybubu() {
 
   return { transferOwnership, ...rest };
 }
+
+export function useBlacklistBatch() {
+  const { writeContract, contracts, account, ...rest } = useMybubuBaseWrite("Blacklist updated!");
+
+  const blacklistBatch = (addresses: `0x${string}`[], blacklisted: boolean) => {
+    if (!account) { toast.error("Connect wallet first"); return; }
+    writeContract({
+      address: contracts.MYBUBU_TOKEN,
+      abi: MYBUBU_ABI,
+      functionName: "blacklistBatch",
+      args: [addresses, blacklisted],
+    } as any);
+  };
+
+  return { blacklistBatch, ...rest };
+}
